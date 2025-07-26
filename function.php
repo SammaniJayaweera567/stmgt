@@ -7,9 +7,9 @@ function dataClean($input = null)
     return htmlspecialchars(stripslashes(trim($input ?? '')));
 }
 
-function dbConn()
+function dbConn($host, $username, $password, $dbname, $port = 3306)
 {
-    $conn = new mysqli("localhost", "dev1", "123456", "stmgt", 3307);
+    $conn = new mysqli($host, $username, $password, $dbname, $port);
     if ($conn->connect_error) {
         die("Connection failed:" . $conn->connect_error);
     } else {
