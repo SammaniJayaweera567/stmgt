@@ -776,4 +776,34 @@ function getAllStudentsForDropdown($conn) {
     return $students;
 }
 
-// You can add other helper functions here in the future
+// Permission 
+function hasPermission($userId, $slug) {
+    $conn = dbConn(); // your DB connection
+    
+    $sql = "
+        SELECT 1 
+        FROM users u
+        JOIN user_roles r ON u.user_role_id = r.id
+        JOIN role_permissions rp ON rp.role_id = r.id
+        JOIN permissions p ON p.id = rp.permission_id
+        WHERE u.id = ? AND p.slug = ?
+        LIMIT 1
+    ";
+    
+    $stmt = $conn->prepare($sql);
+    if (!$stmt) {
+        error_log("Prepare failed: " . $conn->error);
+        return false;
+    }
+    
+    $stmt->bind_param("is", $userId, $slug);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    
+    $hasPermission = ($result && $result->num_rows > 0);
+    
+    $stmt->close();
+    $conn->close();
+    
+    return $hasPermission;
+}
