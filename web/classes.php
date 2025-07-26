@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['enroll'])) {
     } else {
         $student_user_id = (int)$_SESSION['user_id'];
         $class_id = (int)$_POST['class_id'];
-        $db = dbConn();
+        
 
         // Validation 1: Check if already enrolled
         $sql_check_enrollment = "SELECT id FROM enrollments WHERE student_user_id = $student_user_id AND class_id = $class_id AND status = 'active'";
