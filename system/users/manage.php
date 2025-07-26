@@ -29,7 +29,7 @@ show_status_message();
                                 <th>Telephone</th>
                                 <th>Role</th>
                                 <th>Status</th>
-                                <th>Actions</th>
+                                <th>Actions </th>
                             </tr>
                         </thead>
                         <tbody>
