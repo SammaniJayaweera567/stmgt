@@ -77,6 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['enroll'])) {
                         if ($db->query($sql_enroll)) {
                             $_SESSION['enroll_success'] = "You have successfully enrolled in the class!";
                             header("Location: " . WEB_URL . "dashboard/student.php");
+                            unset($_SESSION['enroll_success']);
                             exit();
                         } else {
                             $messages['error'] = "An error occurred during enrollment. Please try again.";
