@@ -1,0 +1,2 @@
+# STMGT
+Student Management System

@@ -1,0 +1,245 @@
+@font-face {
+  font-family: "Lato";
+  src: url("../fonts/Lato-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Lato";
+  src: url("../fonts/Lato-Bold.ttf") format("truetype");
+  font-weight: bold;
+  font-style: normal;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.nav-link,
+.brand-text,
+.main-header,
+.sidebar,
+.content-wrapper {
+  font-family: "Lato", sans-serif !important;
+}
+
+[class*="sidebar-dark-"] .nav-sidebar > .nav-item > .nav-link.active {
+  box-shadow: none;
+}
+
+.sidebar-dark-primary .nav-sidebar > .nav-item > .nav-link.active,
+.sidebar-light-primary .nav-sidebar > .nav-item > .nav-link.active {
+  background-color: #2ca7ad0d;
+  border-bottom: 1px solid #59a3ff6b;
+}
+
+.layout-fixed .main-sidebar {
+  background: #436276;
+}
+
+[class*="sidebar-dark-"] .nav-treeview > .nav-item > .nav-link {
+  color: #ffffff;
+}
+
+.card-title {
+  font-weight: 600;
+}
+
+.card-primary:not(.card-outline) > .card-header {
+  background-color: #d76c3a;
+}
+
+[class*="sidebar-dark"] .btn-sidebar,
+[class*="sidebar-dark"] .form-control-sidebar {
+  background-color: #e9dfd2;
+  border: #e9dfd2;
+  color: black;
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: #d76c3a;
+  border-color: #d76c3a;
+}
+
+.form-control {
+  border: 1px solid #46667b7a;
+}
+
+input:-internal-autofill-selected {
+  background-color: #f2e8dc !important;
+}
+
+.form-control:focus {
+  border-color: #f2e8dc !important;
+}
+
+.card-footer {
+  background-color: #d76c3a0d;
+}
+
+.breadcrumb-item a {
+  color: #db9b4b;
+}
+
+.nav-tabs .nav-link {
+  color: #495057;
+  font-weight: 500;
+  border: none;
+  padding: 12px 20px;
+}
+.nav-tabs .nav-link.active {
+  color: #46667b;
+  background-color: transparent;
+  border-bottom: 1px solid #46667b;
+}
+.card {
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.05);
+}
+.card-header {
+  background-color: white;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+.table th {
+  border-top: none;
+  background-color: #f8f9fa;
+}
+.action-btn {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+}
+.btn-view {
+  background-color: #17a2b8;
+  border-color: #17a2b8;
+  color: white;
+}
+.btn-edit {
+  background-color: #ffc107;
+  border-color: #ffc107;
+  color: #212529;
+}
+.btn-delete {
+  background-color: #dc3545;
+  border-color: #dc3545;
+  color: white;
+}
+
+.dataTables_wrapper .dataTables_scroll {
+  overflow-x: auto;
+}
+
+.content-header h1 {
+  display: none !important;
+}
+
+.nav-tabs .nav-link {
+  background: #f2e8db;
+}
+
+.nav-tabs .nav-link.active {
+  color: #46667b;
+  background-color: transparent;
+  border-bottom: 1px solid #46667b;
+}
+
+.page-item.active .page-link {
+  background-color: #46667b;
+  border-color: #46667b;
+}
+
+select.form-select.form-select-sm {
+  margin: 5px;
+}
+
+select.form-select.form-select-sm {
+  margin: 5px;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+i.fas.fa-arrow-alt-circle-right {
+  margin-top: 4px !important;
+  margin-right: 7px !important;
+}
+
+.content-wrapper {
+  background: white !important;
+}
+
+.card {
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 0 15px rgb(183 183 183 / 47%);
+}
+
+.card {
+  box-shadow: 0 0 15px rgb(41 43 102 / 15%);
+}
+
+.btn-primary:hover {
+  background-color: #0056b3 !important;
+  border-color: #004a99 !important;
+  color: #fff !important;
+}
+
+span.badge.p-2.mr-2.badge {
+  background: #acd5c0 !important;
+  color: #106a5f !important;
+}
+
+span.badge.p-2.mr-2 {
+  background-color: #acd5c0;
+  color: #106a5f;
+  font-size: 14px;
+  padding: 8px 16px;
+}
+
+h5.detail-header.mb-0 {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+}
+
+.brand-link .brand-image {
+  width: 86px !important;
+  max-height: 60px !important;
+}
+
+a.brand-link {
+  height: 82px;
+}
+
+.card-primary.card-outline {
+  border-top: 3px solid #46667b;
+}
+
+.modal-footer {
+  background-color: #d76c3a0d !important;
+}
+
+.routine-table th,
+.routine-table td {
+  vertical-align: top;
+  text-align: center;
+}
+.routine-table th:first-child,
+.routine-table td:first-child {
+  text-align: left; /* Keep Day column left-aligned */
+  min-width: 100px;
+}
+.badge {
+  white-space: normal; /* Allow text to wrap within the badge */
+}
+/* Your custom styles for content-header-text, card, etc. */
+.content-header-text {
+  color: #db9b4b; /* Example color from your screenshots */
+}
+
+.card-header.table-headers-bg {
+    background-color: #e9dfd2 !important;
+}

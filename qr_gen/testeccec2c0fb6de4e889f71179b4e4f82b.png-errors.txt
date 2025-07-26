@@ -1,0 +1,432 @@
+2023-04-30 03:19:09: <br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>62</b><br />
+2025-05-03 10:33:04: <br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>62</b><br />
+2025-05-03 10:34:39: <br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\bit_project_01\system\assets\phpqrcode\qrsplit.php</b> on line <b>62</b><br />
+2025-05-04 02:33:43: <br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+2025-05-04 02:34:40: <br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+2025-05-04 02:34:42: <br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+2025-05-04 02:34:57: <br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+2025-05-04 02:36:02: <br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+2025-05-04 02:36:05: <br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>D:\software\xampp\htdocs\jobnet\qr_gen\qrsplit.php</b> on line <b>62</b><br />
