@@ -19,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['enroll'])) {
     }
 
     // Check if the user role is 'student'
-    if (!isset($_SESSION['user_role_name']) || strtolower($_SESSION['user_role_name']) != 'student') {
+    if (!isset($_SESSION['user_role_name']) || strtolower($_SESSION['user_role_name']) != 'Student') {
         $messages['error'] = "Only students can enroll in classes.";
     } else {
         $student_user_id = (int)$_SESSION['user_id'];
