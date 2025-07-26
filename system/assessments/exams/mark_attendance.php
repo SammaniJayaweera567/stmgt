@@ -5,7 +5,7 @@ include '../../../init.php'; // Corrected path
 $db = dbConn();
 
 // 2. Fetch user's role name from the database (most reliable way)
-$logged_in_user_id = (int)$_SESSION['ID'];
+$logged_in_user_id = (int)$_SESSION['user_id'];
 $user_role_name = '';
 
 $sql_user_role = "SELECT ur.RoleName FROM users u JOIN user_roles ur ON u.user_role_id = ur.Id WHERE u.Id = '$logged_in_user_id'";

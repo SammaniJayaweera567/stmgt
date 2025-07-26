@@ -9,7 +9,7 @@ $db = dbConn();
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
     $slip_id = (int)($_POST['slip_id'] ?? 0);
     $invoice_id = (int)($_POST['invoice_id'] ?? 0);
-    $reviewed_by = $_SESSION['ID'] ?? null;
+    $reviewed_by = $_SESSION['user_id'] ?? null;
 
     if ($slip_id > 0 && $invoice_id > 0) {
         // --- APPROVE ACTION ---

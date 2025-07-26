@@ -3,7 +3,7 @@ ob_start();
 include '../../../init.php';
 
 // No user role check for now, will add later
-// if (!isset($_SESSION['ID'])) { header("Location:../login.php"); exit(); }
+// if (!isset($_SESSION['user_id'])) { header("Location:../login.php"); exit(); }
 
 $db = dbConn();
 $messages = [];

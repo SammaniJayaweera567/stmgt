@@ -5,7 +5,7 @@ include '../../init.php'; // Adjust path if init.php is located differently
 header('Content-Type: application/json');
 
 // Check if the user is logged in (session 'ID' exists)
-if (!isset($_SESSION['ID'])) {
+if (!isset($_SESSION['user_id'])) {
     echo json_encode(['success' => false, 'message' => 'Unauthorized access. Please log in.']);
     exit();
 }

@@ -6,7 +6,7 @@ if (session_status() == PHP_SESSION_NONE) {
 include '../../init.php';
 
 // Security: Only allow 'Card Checker' or 'Admin'
-if (!isset($_SESSION['ID'])) {
+if (!isset($_SESSION['user_id'])) {
     header("Location: ../../auth/login.php");
     exit();
 }

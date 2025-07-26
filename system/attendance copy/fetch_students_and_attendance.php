@@ -3,7 +3,7 @@ ob_start();
 include '../../init.php'; // Adjust path as necessary
 
 // Ensure user is logged in
-if (!isset($_SESSION['ID'])) {
+if (!isset($_SESSION['user_id'])) {
     header('Content-Type: application/json');
     echo json_encode(['success' => false, 'message' => 'Unauthorized access. Please login.']);
     exit();

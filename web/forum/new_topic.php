@@ -9,7 +9,7 @@ extract($_POST);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $title = trim($_POST['title']);
-    $user_id = $_SESSION['ID'];
+    $user_id = $_SESSION['user_id'];
 
     if ($title != '') {
         $db->query("INSERT INTO forum_topics (title, created_by) VALUES ('$title','$user_id')");
@@ -37,7 +37,7 @@ $db = dbConn();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $title = trim($_POST['title']);
-    $user_id = $_SESSION['ID'];
+    $user_id = $_SESSION['user_id'];
 
     if ($title != '') {
         $db->query("INSERT INTO forum_topics (title, created_by) VALUES ('$title','$user_id')");

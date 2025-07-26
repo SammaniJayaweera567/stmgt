@@ -3,13 +3,13 @@ ob_start();
 include '../../init.php'; // Path from web/dashboard/
 
 // 1. Security Check: Ensure a user (student or parent) is logged in
-if (!isset($_SESSION['ID'])) {
+if (!isset($_SESSION['user_id'])) {
     header("Location: " . WEB_URL . "auth/login.php");
     exit();
 }
 
 $db = dbConn();
-$logged_in_user_id = (int)$_SESSION['ID'];
+$logged_in_user_id = (int)$_SESSION['user_id'];
 $user_role = strtolower($_SESSION['user_role_name'] ?? '');
 $messages = [];
 

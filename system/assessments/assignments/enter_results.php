@@ -3,7 +3,7 @@ ob_start();
 include '../../../init.php'; // Correct path from /system/assessments/assignments/
 
 // --- Security Check (REMOVED AS PER REQUEST for development) ---
-// if (!isset($_SESSION['ID'])) {
+// if (!isset($_SESSION['user_id'])) {
 //     header("Location: ../../../login.php"); // Redirect to system login
 //     exit();
 // }
@@ -11,7 +11,7 @@ include '../../../init.php'; // Correct path from /system/assessments/assignment
 $db = dbConn();
 
 // Get user's ID (still needed for 'evaluated_by_teacher_id')
-$logged_in_user_id = (int)($_SESSION['ID'] ?? 0); 
+$logged_in_user_id = (int)($_SESSION['user_id'] ?? 0); 
 
 $messages = [];
 

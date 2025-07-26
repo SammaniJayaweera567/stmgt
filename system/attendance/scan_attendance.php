@@ -4,14 +4,14 @@ include '../../init.php';
 
 // --- FINALIZED SECURITY CHECK ---
 // Check if user is logged in
-if (!isset($_SESSION['ID'])) {
+if (!isset($_SESSION['user_id'])) {
     header("Location: ../login.php");
     exit();
 }
 
 // 2. Check if the logged-in user has the correct role OR is the Super Admin (ID = 1).
 $user_role = isset($_SESSION['user_role']) ? strtolower($_SESSION['user_role']) : '';
-$user_id = isset($_SESSION['ID']) ? (int)$_SESSION['ID'] : 0;
+$user_id = isset($_SESSION['user_id']) ? (int)$_SESSION['user_id'] : 0;
 
 if ($user_id !== 1 && $user_role !== 'admin' && $user_role !== 'card checker') {
     // Display a clear access denied message if not Admin (by ID or Role) or Card Checker.

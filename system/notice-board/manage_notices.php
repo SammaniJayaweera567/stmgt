@@ -3,7 +3,7 @@ ob_start();
 include '../../init.php'; // Adjust path as necessary for your project structure
 
 // Ensure user is logged in
-if (!isset($_SESSION['ID'])) {
+if (!isset($_SESSION['user_id'])) {
     header("Location: ../login.php");
     exit();
 }

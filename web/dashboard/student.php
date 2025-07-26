@@ -3,13 +3,13 @@ ob_start();
 include '../../init.php'; // Corrected path to init.php
 
 // 1. Security Check: Ensure a student is logged in
-if (!isset($_SESSION['ID']) || strtolower($_SESSION['user_role_name'] ?? '') != 'student') {
+if (!isset($_SESSION['user_id']) || strtolower($_SESSION['user_role_name'] ?? '') != 'student') {
     header("Location: " . WEB_URL . "auth/login.php");
     exit();
 }
 
 $db = dbConn();
-$logged_in_student_id = (int)$_SESSION['ID']; 
+$logged_in_student_id = (int)$_SESSION['user_id']; 
 
 // 2. Fetch Student's Profile
 $sql_profile = "SELECT 

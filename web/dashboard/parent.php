@@ -5,12 +5,12 @@ include '../../init.php'; // Corrected path to init.php
 $db = dbConn();
 
 // 1. Security Check: Ensure a parent is logged in
-if (!isset($_SESSION['ID']) || strtolower($_SESSION['user_role_name'] ?? '') != 'parent') {
+if (!isset($_SESSION['user_id']) || strtolower($_SESSION['user_role_name'] ?? '') != 'parent') {
     header("Location: " . WEB_URL . "auth/login.php");
     exit();
 }
 
-$parent_user_id = (int)$_SESSION['ID'];
+$parent_user_id = (int)$_SESSION['user_id'];
 
 // --- Fetch logged-in parent's details ---
 $parent_first_name = $_SESSION['first_name'] ?? 'Parent';

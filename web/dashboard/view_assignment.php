@@ -3,13 +3,13 @@ ob_start();
 include '../../init.php'; // Correct path from /web/dashboard/
 
 // Session check: Ensure a student is logged in
-if (!isset($_SESSION['ID']) || strtolower($_SESSION['user_role_name'] ?? '') != 'student') {
+if (!isset($_SESSION['user_id']) || strtolower($_SESSION['user_role_name'] ?? '') != 'student') {
     header("Location: " . WEB_URL . "auth/login.php");
     exit();
 }
 
 $db = dbConn();
-$logged_in_student_id = (int)$_SESSION['ID'];
+$logged_in_student_id = (int)$_SESSION['user_id'];
 $messages = [];
 
 $assignment_id = (int)($_GET['assignment_id'] ?? 0);

@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $paid_amount = dataClean($_POST['paid_amount'] ?? 0);
     $payment_method = dataClean($_POST['payment_method'] ?? '');
     $transaction_date = dataClean($_POST['transaction_date'] ?? '');
-    $recorded_by = $_SESSION['ID'] ?? null;
+    $recorded_by = $_SESSION['user_id'] ?? null;
 
     // Basic Validation
     if (empty($paid_amount) || !is_numeric($paid_amount) || $paid_amount <= 0) {

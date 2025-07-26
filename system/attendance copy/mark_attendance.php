@@ -2,7 +2,7 @@
 ob_start();
 include '../../init.php';
 
-if (!isset($_SESSION['ID'])) {
+if (!isset($_SESSION['user_id'])) {
     header("Location: ../login.php");
     exit();
 }

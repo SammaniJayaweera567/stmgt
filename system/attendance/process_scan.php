@@ -7,7 +7,7 @@ include '../../init.php';
 $response = ['status' => 'error', 'message' => 'An unknown error occurred.'];
 
 // --- Security Check 1: Ensure a user is logged in ---
-if (!isset($_SESSION['ID'])) {
+if (!isset($_SESSION['user_id'])) {
     $response['message'] = 'Authentication failed. Please log in again.';
     echo json_encode($response);
     exit();
@@ -25,7 +25,7 @@ $db = dbConn();
 // --- Data Validation ---
 $student_user_id = isset($_POST['student_user_id']) ? (int)$_POST['student_user_id'] : 0;
 $class_id = isset($_POST['class_id']) ? (int)$_POST['class_id'] : 0;
-$marked_by_user_id = (int)$_SESSION['ID']; // The logged-in card checker
+$marked_by_user_id = (int)$_SESSION['user_id']; // The logged-in card checker
 $today_date = date('Y-m-d');
 
 if ($student_user_id <= 0 || $class_id <= 0) {

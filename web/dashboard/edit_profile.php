@@ -3,15 +3,15 @@ ob_start();
 include '../../init.php'; // Correct path
 
 // Security Check: Ensure a student is logged in
-// $_SESSION['ID'] සහ $_SESSION['user_role_name'] 
-if (!isset($_SESSION['ID']) || strtolower($_SESSION['user_role_name'] ?? '') != 'student') {
+// $_SESSION['user_id'] සහ $_SESSION['user_role_name'] 
+if (!isset($_SESSION['user_id']) || strtolower($_SESSION['user_role_name'] ?? '') != 'student') {
     header("Location: " . WEB_URL . "auth/login.php");
     exit();
 }
 
 $db = dbConn();
-// Student user_id එක $_SESSION['ID']
-$student_user_id = (int)$_SESSION['ID']; 
+// Student user_id එක $_SESSION['user_id']
+$student_user_id = (int)$_SESSION['user_id']; 
 $messages = [];
 
 // --- Handle Form Submission (POST Request) ---

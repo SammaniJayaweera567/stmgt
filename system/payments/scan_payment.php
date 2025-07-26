@@ -4,7 +4,7 @@ include '../../init.php';
 
 // --- Security Check ---
 // Ensure only authorized users (e.g., Admin, Card Checker) can access this page.
-// if (!isset($_SESSION['ID'])) {
+// if (!isset($_SESSION['user_id'])) {
 //     header("Location: ../login.php");
 //     exit();
 // }
@@ -154,7 +154,7 @@ include '../../init.php';
 $response = ['status' => 'error', 'message' => 'An unknown error occurred.'];
 
 // --- Security Check ---
-if (!isset($_SESSION['ID'])) {
+if (!isset($_SESSION['user_id'])) {
     $response['message'] = 'Authentication failed. Please log in again.';
     echo json_encode($response);
     exit();
@@ -169,7 +169,7 @@ $db = dbConn();
 
 // --- Data Validation ---
 $invoice_id = isset($_POST['invoice_id']) ? (int)$_POST['invoice_id'] : 0;
-$recorded_by = (int)$_SESSION['ID'];
+$recorded_by = (int)$_SESSION['user_id'];
 
 if ($invoice_id <= 0) {
     $response['message'] = 'Invalid Invoice ID received from scanner.';

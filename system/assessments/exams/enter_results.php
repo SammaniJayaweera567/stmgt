@@ -3,7 +3,7 @@ ob_start();
 include '../../../init.php'; // Corrected path
 
 // Check if the logged-in user has the correct role OR is the Super Admin (ID = 1).
-// $logged_in_user_id = (int)$_SESSION['ID'];
+// $logged_in_user_id = (int)$_SESSION['user_id'];
 // $user_role_name = ''; 
 
 $db = dbConn();

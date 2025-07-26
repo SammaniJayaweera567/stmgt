@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $title = dataClean($_POST['title'] ?? '');
     $description = dataClean($_POST['description'] ?? '');
     $class_id = dataClean($_POST['class_id'] ?? 0);
-    $uploader_id = $_SESSION['ID'] ?? null;
+    $uploader_id = $_SESSION['user_id'] ?? null;
 
     // --- Validation ---
     if (empty($title)) {

@@ -7,7 +7,7 @@ include '../../../init.php'; // Corrected path for nested folders
 $response = ['status' => 'error', 'message' => 'An unknown error occurred.'];
 
 // --- Security Check 1: Ensure a user is logged in ---
-// if (!isset($_SESSION['ID'])) {
+// if (!isset($_SESSION['user_id'])) {
 //     $response['message'] = 'Authentication failed. Please log in again.';
 //     echo json_encode($response);
 //     exit();
@@ -25,7 +25,7 @@ $db = dbConn();
 // --- Data Validation ---
 $student_user_id = isset($_POST['student_user_id']) ? (int)$_POST['student_user_id'] : 0;
 $assessment_id = isset($_POST['assessment_id']) ? (int)$_POST['assessment_id'] : 0; // Changed from class_id to assessment_id
-$marked_by_user_id = (int)$_SESSION['ID']; // The logged-in user (Admin/Teacher/Card Checker)
+$marked_by_user_id = (int)$_SESSION['user_id']; // The logged-in user (Admin/Teacher/Card Checker)
 
 if ($student_user_id <= 0 || $assessment_id <= 0) {
     $response['message'] = 'Invalid data received from the scanner (Student ID or Assessment ID missing).';

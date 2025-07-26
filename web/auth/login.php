@@ -160,7 +160,7 @@ include '../../init.php';
         width: 100%;
         margin-top: 20px;
         cursor: pointer;
-        transition: background-color: 0.3s ease;
+        transition: background-color 0.3s ease; /* fixed here */
     }
 
     .btn-login:hover {

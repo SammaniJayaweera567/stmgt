@@ -5,7 +5,7 @@ include '../init.php';
 
 // --- Security Check for Backend Dashboards ---
 // Ensure user is logged in
-if (!isset($_SESSION['ID'])) {
+if (!isset($_SESSION['user_id'])) {
     header("Location: " . SYS_URL . "login.php");
     exit();
 }

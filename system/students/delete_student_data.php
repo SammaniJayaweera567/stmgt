@@ -6,8 +6,8 @@ header('Content-Type: application/json');
 $response = ['success' => false, 'message' => ''];
 
 // Check if user is logged in/authorized
-// Assuming $_SESSION['ID'] is set upon successful login
-if (!isset($_SESSION['ID'])) {
+// Assuming $_SESSION['user_id'] is set upon successful login
+if (!isset($_SESSION['user_id'])) {
     $response['message'] = "Unauthorized access. Please log in.";
     echo json_encode($response);
     exit();
