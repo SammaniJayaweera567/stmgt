@@ -11,6 +11,7 @@ $messages = [];
 // --- Part 1: Handle Enrollment Form Submission (POST Request) ---
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['enroll'])) {
     // Security: Check if user is logged in to enroll
+    error_log(print_r($_SESSION, true));
     if (!isset($_SESSION['user_id'])) {
         $_SESSION['login_error'] = "Please log in to enroll in a class.";
         header("Location: " . WEB_URL . "auth/login.php");
@@ -18,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['enroll'])) {
     }
 
     // Check if the user role is 'student'
-    if (!isset($_SESSION['user_role']) || strtolower($_SESSION['user_role']) != 'student') {
+    if (!isset($_SESSION['user_role_name']) || strtolower($_SESSION['user_role_name']) != 'student') {
         $messages['error'] = "Only students can enroll in classes.";
     } else {
         $student_user_id = (int)$_SESSION['user_id'];
