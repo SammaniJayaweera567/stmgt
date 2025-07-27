@@ -1,6 +1,17 @@
 <?php
 ob_start();
+
 include '../../../init.php';
+if (!hasPermission($_SESSION['user_id'], 'student_report')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
+
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
+
+    header("Location: $backUrl");
+    exit;
+}
 ?>
 <div class="container-fluid">
     <div class="row">

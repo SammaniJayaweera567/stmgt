@@ -7,7 +7,16 @@ if (!isset($_SESSION['user_id'])) {
     header("Location:../login.php");
     exit();
 }
+if (!hasPermission($_SESSION['user_id'], 'edit_user')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
 
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
+
+    header("Location: $backUrl");
+    exit;
+}
 // --- Validation Functions ---
 function isValidNIC($nic) {
     $len = strlen($nic);

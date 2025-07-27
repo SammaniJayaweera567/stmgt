@@ -2,7 +2,16 @@
 ob_start();
 // [FIX 1] All paths corrected to '../'
 include '../../init.php';
+if (!hasPermission($_SESSION['user_id'], 'manage_attendance')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
 
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
+
+    header("Location: $backUrl");
+    exit;
+}
 $db = dbConn();
 
 // --- Step 1: Handle Filters ---

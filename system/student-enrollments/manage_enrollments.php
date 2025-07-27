@@ -1,7 +1,16 @@
 <?php
 ob_start();
 include '../../init.php'; // ඔබගේ init.php ගොනුවට නිවැරදි path එක දෙන්න
+if (!hasPermission($_SESSION['user_id'], 'manage_student_enrollment')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
 
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
+
+    header("Location: $backUrl");
+    exit;
+}
 show_status_message(); 
 ?>
 <div class="container-fluid">
@@ -72,6 +81,7 @@ show_status_message();
                                 <td><?= display_status_badge($row['enrollment_status']) ?></td>
                                 <td>
                                     <div class="btn-group">
+                                        <?php if (hasPermission($_SESSION['user_id'], 'show_student_enrollment')) { ?>
                                         <form action="view.php" method="post" style="display:inline-block;"
                                             class="mr-1">
                                             <input type="hidden" name="enrollment_id"
@@ -79,7 +89,9 @@ show_status_message();
                                             <button type="submit" class="btn btn-info btn-sm" title="View Details"><i
                                                     class="fas fa-eye"></i></button>
                                         </form>
+                                        <?php } ?>
 
+                                        <?php if (hasPermission($_SESSION['user_id'], 'edit_student_enrollment')) { ?>
                                         <form action="process_enrollment.php" method="post"
                                             style="display:inline-block;" class="mr-1">
                                             <input type="hidden" name="enrollment_id"
@@ -104,7 +116,8 @@ show_status_message();
                                                 style="border-top-left-radius: 0; border-bottom-left-radius: 0;"><i
                                                     class="fas fa-check"></i></button>
                                         </form>
-
+                                        <?php } ?>
+                                        <?php if (hasPermission($_SESSION['user_id'], 'delete_student_enrollment')) { ?>
                                         <form action="process_enrollment.php" method="post"
                                             style="display:inline-block;" id="deleteForm<?= $row['enrollment_id'] ?>">
                                             <input type="hidden" name="enrollment_id"
@@ -115,6 +128,7 @@ show_status_message();
                                                 onclick="confirmDelete(<?= $row['enrollment_id'] ?>)"><i
                                                     class="fas fa-trash"></i></button>
                                         </form>
+                                        <?php } ?>
                                     </div>
                                 </td>
                             </tr>

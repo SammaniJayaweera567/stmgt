@@ -1,6 +1,15 @@
 <?php
 include '../../init.php';
+if (!hasPermission($_SESSION['user_id'], 'delete_user')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
 
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
+
+    header("Location: $backUrl");
+    exit;
+}
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['Id'])) {
     $id = $_POST['Id'];
     $profile_image = $_POST['ProfileImage'];

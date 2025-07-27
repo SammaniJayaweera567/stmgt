@@ -79,4 +79,5 @@ $user_last_name = $_SESSION['last_name'] ?? '';
 <?php
 $content = ob_get_clean();
 include 'layouts.php'; // layouts.php is in the same directory as dashboard_admin.php
+
 ?>

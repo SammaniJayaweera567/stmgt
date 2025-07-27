@@ -1,7 +1,16 @@
 <?php
 ob_start();
 include '../../init.php'; // Correct path from /system/grades/
+if (!hasPermission($_SESSION['user_id'], 'manage_assement_grade')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
 
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
+
+    header("Location: $backUrl");
+    exit;
+}
 $db = dbConn();
 ?>
 
@@ -18,9 +27,12 @@ $db = dbConn();
     <div class="row">
         <div class="col-12">
             <div class="d-flex justify-content-start mb-4">
+                 <?php if (hasPermission($_SESSION['user_id'], 'add_assement_grade')) { ?>
                 <a href="add_grade.php" class="btn btn-primary">
+                     
                     <i class="fas fa-plus-circle me-1"></i> Add New Grade
                 </a>
+                    <?php } ?>
             </div>
             <div class="card">
                 <div class="card-header">
@@ -55,10 +67,13 @@ $db = dbConn();
                                     <td><?= display_status_badge($row['status']) ?></td>
                                     <td class="text-start">
                                         <div class="btn-group">
+                                            <?php if (hasPermission($_SESSION['user_id'], 'edit_assement_grade')) { ?>
                                             <a href="edit_grade.php?id=<?= $row['id'] ?>"
                                                 class="btn btn-primary btn-sm mr-1" title="Edit Grade">
                                                 <i class="fas fa-edit"></i>
                                             </a>
+                                            <?php } ?>
+                                            <?php if (hasPermission($_SESSION['user_id'], 'delete_assement_grade')) { ?>
                                             <form action="delete_grade.php" method="post" style="display:inline-block;"
                                                 id="deleteForm<?= $row['id'] ?>">
                                                 <input type="hidden" name="id" value="<?= $row['id'] ?>">
@@ -67,6 +82,7 @@ $db = dbConn();
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
+                                            <?php } ?>
                                         </div>
                                     </td>
                                 </tr>

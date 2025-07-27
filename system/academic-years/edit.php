@@ -9,7 +9,16 @@ $year_name = '';
 $start_date = '';
 $end_date = '';
 $status = '';
+if (!hasPermission($_SESSION['user_id'], 'academic-years-edit')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
 
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
+
+    header("Location: $backUrl");
+    exit;
+}
 // --- Handle form submission for the UPDATE action ---
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['action'] == 'update') {
     // Clean all submitted data

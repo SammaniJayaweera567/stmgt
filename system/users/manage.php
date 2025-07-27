@@ -1,6 +1,27 @@
 <?php
 ob_start();
 include '../../init.php';
+if (!isset($_SESSION['user_id'])) {
+    header("Location:../login.php");
+}
+
+
+
+if (!hasPermission($_SESSION['user_id'], 'user_manage')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
+
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
+
+    header("Location: $backUrl");
+    exit;
+}
+
+if (!empty($_SESSION['error'])) {
+    echo "<script>alert('" . addslashes($_SESSION['error']) . "');</script>";
+    unset($_SESSION['error']);
+}
 
 show_status_message(); 
 ?>
@@ -13,9 +34,11 @@ show_status_message();
     </div>
     <div class="row">
         <div class="col-12">
+            <?php if (hasPermission($_SESSION['user_id'], 'create_new_user')) { ?>
             <div class="d-flex justify-content-start mb-4">
                 <a href="add.php" class="btn btn-primary"><i class="fas fa-plus-circle me-1"></i> Add New User</a>
             </div>
+            <?php } ?>
             <div class="card">
                 <div class="card-header">
                     <h6 class="card-title" style="font-size: 1.05rem !important;">User List</h6>
@@ -57,31 +80,38 @@ show_status_message();
                                 <td>
                                     <div class="btn-group">
                                         <!-- VIEW BUTTON (NEW) -->
-                                        <form action="view.php" method="post" class="mr-1"
-                                            style="display:inline-block;">
-                                            <input type="hidden" name="id" value="<?= $row['Id'] ?>">
-                                            <button type="submit" class="btn btn-info btn-sm" title="View User"><i
-                                                    class="fas fa-eye"></i></button>
-                                        </form>
+                                        <?php if (hasPermission($_SESSION['user_id'], 'show_user')) { ?>
+                                            <form action="view.php" method="post" class="mr-1"
+                                                style="display:inline-block;">
+                                                <input type="hidden" name="id" value="<?= $row['Id'] ?>">
+                                                <button type="submit" class="btn btn-info btn-sm" title="View User"><i
+                                                        class="fas fa-eye"></i></button>
+                                            </form>
+                                        <?php } ?>
 
                                         <!-- EDIT BUTTON -->
-                                        <form action="edit.php" method="post" class="mr-1"
-                                            style="display:inline-block;">
-                                            <input type="hidden" name="id" value="<?= $row['Id'] ?>">
-                                            <button type="submit" class="btn btn-primary btn-sm" title="Edit User"><i
-                                                    class="fas fa-edit"></i></button>
-                                        </form>
+                                        <?php if (hasPermission($_SESSION['user_id'], 'edit_user')) { ?>
+                                            <form action="edit.php" method="post" class="mr-1"
+                                                style="display:inline-block;">
+                                                <input type="hidden" name="id" value="<?= $row['Id'] ?>">
+                                                <button type="submit" class="btn btn-primary btn-sm" title="Edit User"><i
+                                                        class="fas fa-edit"></i></button>
+                                            </form>
+                                        <?php } ?>
+
 
                                         <!-- DELETE BUTTON -->
-                                        <form action="delete.php" method="post" style="display:inline-block;"
-                                            id="deleteForm<?= $row['Id'] ?>">
-                                            <input type="hidden" name="Id" value="<?= $row['Id'] ?>">
-                                            <input type="hidden" name="ProfileImage"
-                                                value="<?= $row['ProfileImage'] ?>">
-                                            <button type="button" class="btn btn-danger btn-sm" title="Delete User"
-                                                onclick="confirmDelete(<?= $row['Id'] ?>)"><i
-                                                    class="fas fa-trash"></i></button>
-                                        </form>
+                                        <?php if (hasPermission($_SESSION['user_id'], 'delete_user')) { ?>
+                                            <form action="delete.php" method="post" style="display:inline-block;"
+                                                id="deleteForm<?= $row['Id'] ?>">
+                                                <input type="hidden" name="Id" value="<?= $row['Id'] ?>">
+                                                <input type="hidden" name="ProfileImage"
+                                                    value="<?= $row['ProfileImage'] ?>">
+                                                <button type="button" class="btn btn-danger btn-sm" title="Delete User"
+                                                    onclick="confirmDelete(<?= $row['Id'] ?>)"><i
+                                                        class="fas fa-trash"></i></button>
+                                            </form>
+                                        <?php } ?>
                                     </div>
                                 </td>
                             </tr>

@@ -2,7 +2,16 @@
 ob_start();
 // The path needs to be from system/classes/materials/
 include '../../../init.php'; 
+if (!hasPermission($_SESSION['user_id'], 'manage_class_material')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
 
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
+
+    header("Location: $backUrl");
+    exit;
+}
 $db = dbConn();
 ?>
 
@@ -66,15 +75,19 @@ $db = dbConn();
                                             </td>
                                             <td><?= htmlspecialchars(date('Y-m-d', strtotime($row['created_at']))) ?></td>
                                             <td class="text-center">
+                                                <?php if (hasPermission($_SESSION['user_id'], 'edit_class_material')) { ?>
                                                 <a href="edit_material.php?id=<?= $row['id'] ?>" class="btn btn-primary btn-sm" title="Edit Material">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
+                                                <?php } ?>
+                                                <?php if (hasPermission($_SESSION['user_id'], 'delete_class_material')) { ?>
                                                 <form action="delete_material.php" method="post" style="display:inline-block;" onsubmit="return confirm('Are you sure you want to delete this material?');">
                                                     <input type="hidden" name="id" value="<?= $row['id'] ?>">
                                                     <button type="submit" class="btn btn-danger btn-sm" title="Delete Material">
                                                         <i class="fas fa-trash"></i>
                                                     </button>
                                                 </form>
+                                                <?php } ?>
                                             </td>
                                         </tr>
                                 <?php
