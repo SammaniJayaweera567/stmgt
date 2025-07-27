@@ -1,8 +1,19 @@
 <?php
 ob_start(); // Start output buffering
 include '../../init.php'; // Include init.php (assumes dbConn(), show_status_message(), display_status_badge() functions are here)
+if (!hasPermission($_SESSION['user_id'], 'manage_class_subject')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
 
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
+
+    header("Location: $backUrl");
+    exit;
+}
+show_status_message(); // Display status messages (e.g., added, updated, deleted)
 ?>
+
 <div class="container-fluid">
     <div class="row mb-4">
         <div class="d-flex content-header-text">
@@ -15,7 +26,9 @@ include '../../init.php'; // Include init.php (assumes dbConn(), show_status_mes
     <div class="row">
         <div class="col-12">
             <div class="d-flex justify-content-start mb-4">
+                 <?php if (hasPermission($_SESSION['user_id'], 'add_class_subject')) { ?>
                 <a href="add_class_levels_subjects.php" class="btn btn-primary"><i class="fas fa-plus-circle me-1"></i> Add New Class Level Subject</a>
+                <?php } ?>
             </div>
             <div class="card">
                 <div class="card-header">
@@ -62,17 +75,20 @@ include '../../init.php'; // Include init.php (assumes dbConn(), show_status_mes
                                             <td><?= htmlspecialchars($row['subject_name']) ?></td>
                                             <td><?= display_status_badge($row['status']) ?></td>
                                             <td class="text-start">
+                                                <?php if (hasPermission($_SESSION['user_id'], 'edit_class_subject')) { ?>
                                                 <!-- FIXED: Action points to the correct edit file -->
                                                 <form action="edit_class_levels_subjects.php" method="post" style="display:inline-block;">
                                                     <input type="hidden" name="id" value="<?= $row['id'] ?>">
                                                     <button type="submit" class="btn btn-primary btn-sm" title="Edit Relationship"><i class="fas fa-edit"></i></button>
                                                 </form>
-                                                
+                                                <?php } ?>
+                                                <?php if (hasPermission($_SESSION['user_id'], 'delete_class_subject')) { ?>
                                                 <!-- FIXED: Action points to the correct delete file -->
                                                 <form action="delete_class_levels_subjects.php" method="post" style="display:inline-block;" id="deleteForm<?= $row['id'] ?>">
                                                     <input type="hidden" name="id" value="<?= $row['id'] ?>">
                                                     <button type="button" onclick="confirmDelete(<?= $row['id'] ?>)" class="btn btn-danger btn-sm" title="Delete Relationship"><i class="fas fa-trash"></i></button>
                                                 </form>
+                                                <?php } ?>
                                             </td>
                                         </tr>
                                 <?php 

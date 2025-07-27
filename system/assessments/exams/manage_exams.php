@@ -1,7 +1,16 @@
 <?php
 ob_start();
 include '../../../init.php';
+if (!hasPermission($_SESSION['user_id'], 'manage_exam')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
 
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
+
+    header("Location: $backUrl");
+    exit;
+}
 
 $db = dbConn();
 ?>
@@ -19,9 +28,11 @@ $db = dbConn();
     <div class="row">
         <div class="col-12">
             <div class="d-flex justify-content-start mb-4">
+                <?php if (hasPermission($_SESSION['user_id'], 'add_exam')) { ?>
                 <a href="add_exam.php" class="btn btn-primary">
                     <i class="fas fa-plus-circle me-1"></i> Add New Exam
                 </a>
+                <?php } ?>
             </div>
             <div class="card">
                 <div class="card-header">
@@ -87,21 +98,27 @@ $db = dbConn();
                                             <td><?= display_status_badge($row['status']) ?></td>
                                             <td class="text-start">
                                                 <div class="btn-group">
+                                                    <?php if (hasPermission($_SESSION['user_id'], 'edit_exam')) { ?>
                                                     <a href="edit_exam.php?id=<?= $row['id'] ?>" class="btn btn-primary btn-sm mr-1" title="Edit Exam">
                                                         <i class="fas fa-edit"></i>
                                                     </a>
+                                                    <?php } ?>
+                                                    <?php if (hasPermission($_SESSION['user_id'], 'delete_exam')) { ?>
                                                     <form action="delete_exam.php" method="post" style="display:inline-block;" id="deleteForm<?= $row['id'] ?>">
                                                         <input type="hidden" name="id" value="<?= $row['id'] ?>">
                                                         <button type="button" onclick="confirmDelete(<?= $row['id'] ?>)" class="btn btn-danger btn-sm" title="Delete Exam">
                                                             <i class="fas fa-trash"></i>
                                                         </button>
                                                     </form>
+                                                    <?php } ?>
+                                                    <?php if (hasPermission($_SESSION['user_id'], 'show_exam')) { ?>
                                                     <a href="mark_attendance.php?assessment_id=<?= $row['id'] ?>" class="btn btn-info btn-sm ml-1" title="Mark Exam Attendance">
                                                         <i class="fas fa-user-check"></i>
                                                     </a>
                                                     <a href="enter_results.php?assessment_id=<?= $row['id'] ?>" class="btn btn-success btn-sm ml-1" title="Enter Exam Results">
                                                         <i class="fas fa-clipboard-check"></i>
                                                     </a>
+                                                    <?php } ?>
                                                 </div>
                                             </td>
                                         </tr>

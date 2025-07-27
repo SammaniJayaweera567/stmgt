@@ -2,7 +2,16 @@
 include '../../init.php'; // Adjust path as necessary
 
 $db = dbConn(); // Get database connection
+if (!hasPermission($_SESSION['user_id'], 'delete_notice')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
 
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
+
+    header("Location: $backUrl");
+    exit;
+}
 header('Content-Type: application/json');
 $response = ['success' => false, 'message' => ''];
 

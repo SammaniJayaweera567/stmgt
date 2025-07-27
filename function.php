@@ -807,3 +807,82 @@ function hasPermission($userId, $slug) {
     
     return $hasPermission;
 }
+
+
+function createPermission($name, $slug) {
+    $conn = dbConn();
+    $sql = "INSERT INTO permissions (name, slug) VALUES (?, ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('ss', $name, $slug);
+    return $stmt->execute();
+}
+
+function getAllPermissions() {
+    $conn = dbConn();
+    $result = $conn->query("SELECT * FROM permissions ORDER BY id");
+    return $result->fetch_all(MYSQLI_ASSOC);
+}
+
+
+function updatePermission($id, $name, $slug) {
+    $conn = dbConn();
+    $sql = "UPDATE permissions SET name = ?, slug = ? WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('ssi', $name, $slug, $id);
+    return $stmt->execute();
+}
+
+function deletePermission($id) {
+    $conn = dbConn();
+    $sql = "DELETE FROM permissions WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('i', $id);
+    return $stmt->execute();
+}
+function assignPermissionToRole($roleId, $permissionId) {
+    $conn = dbConn();
+    $sql = "INSERT IGNORE INTO role_permissions (role_id, permission_id) VALUES (?, ?)";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('ii', $roleId, $permissionId);
+    return $stmt->execute();
+}
+
+function removePermissionFromRole($roleId, $permissionId) {
+    $conn = dbConn();
+    $sql = "DELETE FROM role_permissions WHERE role_id = ? AND permission_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('ii', $roleId, $permissionId);
+    return $stmt->execute();
+}
+
+function renderPermissions($permissions, $filter_ids, $assigned_permission_ids) {
+    foreach ($permissions as $perm) {
+        if (in_array($perm['id'], $filter_ids)) {
+            $checked = in_array($perm['id'], $assigned_permission_ids) ? 'checked' : '';
+
+            echo '<div class="d-flex justify-content-between align-items-center border rounded p-2 mb-2">';
+            
+            // Left side: checkbox and label
+            echo '<div class="form-check">';
+            echo '<input type="checkbox" class="form-check-input me-2" id="perm_'.$perm['id'].'" name="permissions[]" value="'.$perm['id'].'" '.$checked.'>';
+            echo '<label class="form-check-label fw-semibold" for="perm_'.$perm['id'].'">'.htmlspecialchars($perm['name']).'</label>';
+            echo '</div>';
+
+            // Right side: action buttons
+            echo '<div class="btn-group" role="group" aria-label="Permission actions">';
+            if (hasPermission($_SESSION['user_id'], 'edit_permission')) {
+                echo '<a href="edit.php?id='.$perm['id'].'" class="btn btn-sm btn-outline-primary" title="Edit">';
+                echo '<i class="fas fa-edit"></i>';
+                echo '</a>';
+            }
+            if (hasPermission($_SESSION['user_id'], 'delete_permission')) {
+                echo '<button type="button" class="btn btn-sm btn-outline-danger delete-permission" data-id="'.$perm['id'].'" title="Delete">';
+                echo '<i class="fas fa-trash"></i>';
+                echo '</button>';
+            }
+            echo '</div>';
+
+            echo '</div>';
+        }
+    }
+}

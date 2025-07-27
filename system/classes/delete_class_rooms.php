@@ -1,7 +1,16 @@
 <?php
 ob_start();
 include '../../init.php';
+if (!hasPermission($_SESSION['user_id'], 'delete_class_room')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
 
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
+
+    header("Location: $backUrl");
+    exit;
+}
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id'])) {
     $id = (int)$_POST['id'];
     $db = dbConn();

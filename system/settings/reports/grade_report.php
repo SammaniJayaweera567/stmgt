@@ -1,7 +1,16 @@
 <?php
 ob_start();
 include '../../../init.php';
+if (!hasPermission($_SESSION['user_id'], 'grade_distribution_report')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
 
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
+
+    header("Location: $backUrl");
+    exit;
+}
 // --- NEW: All PHP logic is now at the top for better scope management ---
 
 $db = dbConn();

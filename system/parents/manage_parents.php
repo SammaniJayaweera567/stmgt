@@ -2,7 +2,16 @@
 ob_start();
 // Path from system/parents/
 include '../../init.php'; 
+if (!hasPermission($_SESSION['user_id'], 'manage_parent')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
 
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
+
+    header("Location: $backUrl");
+    exit;
+}
 $db = dbConn();
 ?>
 
@@ -72,9 +81,11 @@ $db = dbConn();
                                                 ?>
                                             </td>
                                             <td class="text-center">
+                                                <?php if (hasPermission($_SESSION['user_id'], 'show_parent')) { ?>
                                                 <a href="link_student.php?parent_id=<?= $row['Id'] ?>" class="btn btn-info btn-sm" title="Manage Linked Children">
                                                     <i class="fas fa-link"></i> Manage Children
                                                 </a>
+                                                <?php } ?>
                                             </td>
                                         </tr>
                                 <?php

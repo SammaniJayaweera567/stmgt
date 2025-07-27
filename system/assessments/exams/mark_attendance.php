@@ -3,7 +3,16 @@ ob_start();
 include '../../../init.php'; // Corrected path
 
 $db = dbConn();
+if (!hasPermission($_SESSION['user_id'], 'edit_exam')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
 
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
+
+    header("Location: $backUrl");
+    exit;
+}
 // 2. Fetch user's role name from the database (most reliable way)
 $logged_in_user_id = (int)$_SESSION['user_id'];
 $user_role_name = '';

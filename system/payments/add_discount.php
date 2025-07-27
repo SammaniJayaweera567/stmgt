@@ -2,7 +2,16 @@
 ob_start();
 // Path from system/payments/
 include '../../init.php'; 
+if (!hasPermission($_SESSION['user_id'], 'add_student_discount')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
 
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
+
+    header("Location: $backUrl");
+    exit;
+}
 // Initialize form variables
 $student_id = '';
 $class_id = '';

@@ -1,7 +1,16 @@
 <?php
 ob_start();
 include '../../init.php'; // Include init.php
+if (!hasPermission($_SESSION['user_id'], 'show_teacher')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
 
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
+
+    header("Location: $backUrl");
+    exit;
+}
 // Check for the user_id from the URL (GET method)
 $user_id = null;
 if (isset($_GET['user_id']) && is_numeric($_GET['user_id'])) {

@@ -1,7 +1,16 @@
 <?php
 ob_start();
 include '../../../init.php';
+if (!hasPermission($_SESSION['user_id'], 'student_progress_report')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
 
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
+
+    header("Location: $backUrl");
+    exit;
+}
 // Check if a student ID was submitted
 if (!isset($_POST['student_id']) || empty($_POST['student_id'])) {
     die("No student selected. Please go back and select a student.");

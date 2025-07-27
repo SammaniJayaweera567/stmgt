@@ -2,7 +2,16 @@
 ob_start();
 include '../../init.php';
 
+if (!hasPermission($_SESSION['user_id'], 'academic-years-manage')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
 
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
+
+    header("Location: $backUrl");
+    exit;
+}
 show_status_message(); 
 ?>
 
@@ -15,9 +24,11 @@ show_status_message();
     </div>
     <div class="row">
         <div class="col-12">
+            <?php if (hasPermission($_SESSION['user_id'], 'academic-years-add')) { ?>
             <div class="d-flex justify-content-start mb-4">
                 <a href="add.php" class="btn btn-primary"><i class="fas fa-plus-circle me-1"></i> Add New Academic Year</a>
             </div>
+            <?php } ?>
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">Academic Years List</h3>
@@ -50,18 +61,22 @@ show_status_message();
                                         <td class="text-left"><?= display_status_badge($row['status']) ?></td> 
                                         
                                         <td class="text-left">
+                                             <?php if (hasPermission($_SESSION['user_id'], 'academic-years-edit')) { ?>
                                             <form action="edit.php" method="post" style="display:inline-block;">
                                                 <input type="hidden" name="id" value="<?= $row['id'] ?>">
                                                 <button type="submit" class="btn btn-primary btn-sm" title="Edit Academic Year">
                                                     <i class="fas fa-edit"></i>
                                                 </button>
                                             </form>
+                                                <?php } ?>
+                                             <?php if (hasPermission($_SESSION['user_id'], 'academic-years-delete')) { ?>
                                             <form action="delete.php" method="post" style="display:inline-block;" id="deleteForm<?= $row['id'] ?>">
                                                 <input type="hidden" name="id" value="<?= $row['id'] ?>">
                                                 <button type="button" onclick="confirmDelete(<?= $row['id'] ?>)" class="btn btn-danger btn-sm" title="Delete Academic Year">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
+                                                <?php } ?>
                                         </td>
                                     </tr>
                                 <?php
