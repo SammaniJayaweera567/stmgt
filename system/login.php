@@ -30,7 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] == "POST") {
         $sql = "SELECT u.Id, u.LastName, u.Password, u.Status, u.user_role_id, r.RoleName 
                 FROM users u 
                 INNER JOIN user_roles r ON r.Id = u.user_role_id 
-                WHERE u.Email = ?";
+                WHERE u.Email = ?
+                AND r.RoleName NOT IN ('Student', 'Parent')";
 
         $stmt = $db->prepare($sql);
         $stmt->bind_param("s", $Email);

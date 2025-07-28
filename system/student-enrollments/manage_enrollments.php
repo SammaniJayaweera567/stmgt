@@ -1,13 +1,9 @@
 <?php
 ob_start();
-<<<<<<< HEAD
-include '../../init.php';
-=======
 include '../../init.php'; // ඔබගේ init.php ගොනුවට නිවැරදි path එක දෙන්න
 if (!hasPermission($_SESSION['user_id'], 'manage_student_enrollment')) {
     // Set error message in session
     $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
->>>>>>> origin/geek
 
     // Redirect back using HTTP_REFERER if available, else fallback to dashboard
     $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';

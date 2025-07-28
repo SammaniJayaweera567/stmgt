@@ -1,7 +1,10 @@
 <?php
 ob_start();
 include '../../../init.php';
-
+if (!isset($_SESSION['user_id'])) {
+    header("Location: " . SYS_URL . "login.php");
+    exit();
+}
 $db = dbConn();
 
 // Handle assign permission form submission

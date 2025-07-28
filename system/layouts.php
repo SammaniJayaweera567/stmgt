@@ -199,7 +199,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="logout.php" role="button">
+                    <a class="nav-link" href="<?= SYS_URL ?>logout.php" role="button">
                         <i class="fas fa-sign-out-alt"></i> Logout
                     </a>
                 </li>
@@ -207,8 +207,9 @@
         </nav>
         <aside class="main-sidebar sidebar-dark-primary elevation-4">
             <a href="index3.html" class="brand-link text-center">
-                <img src="<?= SYS_URL ?>dist/img/thaksalawa.png" alt="AdminLTE Logo" class="brand-image"
-                    style="opacity: .8;">
+                <!-- <img src="<?= SYS_URL ?>dist/img/thaksalawa.png" alt="AdminLTE Logo" class="brand-image"
+                    style="opacity: .8;"> -->
+                    <h3 class="mt-3">Thaksalawa</h3>
             </a>
 
             <div class="sidebar">

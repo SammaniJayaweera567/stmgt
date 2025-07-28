@@ -3,7 +3,7 @@ ob_start();
 include '../../../init.php';
 $db = dbConn();
 if (!isset($_SESSION['user_id'])) {
-    header("Location: ../../dashboard.php");
+    header("Location: " . SYS_URL . "login.php");
     exit();
 }
 if (!hasPermission($_SESSION['user_id'], 'edit_permission')) {
