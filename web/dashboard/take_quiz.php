@@ -21,12 +21,12 @@ if ($quiz_id === 0) {
 
 // --- 2. Fetch Quiz Details and Validate Access ---
 $sql_quiz_details = "SELECT 
-                        a.id, a.title, a.time_limit_minutes, a.pass_mark_percentage, s.subject_name
+                        a.id, a.title, a.time_limit_minutes, a.pass_mark_percentage, a.due_date, a.status, s.subject_name
                     FROM assessments a
                     JOIN classes c ON a.class_id = c.id
                     JOIN subjects s ON a.subject_id = s.id
                     WHERE a.id = '$quiz_id' 
-                    AND a.assessment_type = 'Quiz' 
+                    AND a.assessment_type_id = 3  -- Changed to assessment_type_id = 3 (for Quiz)
                     AND a.status = 'Published'
                     AND c.id IN (SELECT class_id FROM enrollments WHERE student_user_id = '$logged_in_student_id' AND status = 'active')";
 $result_quiz_details = $db->query($sql_quiz_details);
@@ -37,11 +37,26 @@ if ($result_quiz_details->num_rows === 0) {
 }
 $quiz_data = $result_quiz_details->fetch_assoc();
 
+// Check if quiz is overdue
+$current_datetime = date('Y-m-d H:i:s');
+$is_overdue = false;
+if (!empty($quiz_data['due_date']) && strtotime($current_datetime) > strtotime($quiz_data['due_date'])) {
+    $is_overdue = true;
+}
+
 // --- 3. Check if student has already attempted this quiz ---
 $sql_check_attempt = "SELECT id FROM assessment_results WHERE assessment_id = '$quiz_id' AND student_user_id = '$logged_in_student_id'";
 $result_check_attempt = $db->query($sql_check_attempt);
 if ($result_check_attempt->num_rows > 0) {
-    header("Location: view_quiz_result.php?quiz_id=$quiz_id&status=attempted");
+    // Set a session message for already attempted
+    $_SESSION['status_message'] = "You have already attempted this quiz. Here are your results.";
+    header("Location: view_quiz_result.php?quiz_id=$quiz_id");
+    exit();
+}
+
+// If quiz is overdue and not yet attempted, prevent taking it
+if ($is_overdue) {
+    header("Location: student.php?status=error&message=This quiz is overdue and can no longer be taken.");
     exit();
 }
 
@@ -86,26 +101,35 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $db->begin_transaction();
     try {
         // Log the submission attempt
-        // Encode the submitted answers array into a JSON string
-$answers_json = json_encode($submitted_answers);
+        $answers_json = json_encode($submitted_answers); // Encode the submitted answers array into a JSON string
 
-// Log the submission attempt WITH the answers
-$sql_insert_submission = "INSERT INTO student_submissions (assessment_id, student_user_id, submitted_at, submission_status, submission_content) 
-                          VALUES ('$quiz_id', '$logged_in_student_id', NOW(), 'Submitted', '$answers_json')";
-$db->query($sql_insert_submission);
+        // Determine submission status (e.g., 'Submitted' or 'Late Submission')
+        $submission_status = 'Submitted';
+        if ($is_overdue) { // Re-check overdue status at submission time
+            $submission_status = 'Late Submission';
+        }
+
+        // Log the submission attempt WITH the answers and status
+        $sql_insert_submission = "INSERT INTO student_submissions (assessment_id, student_user_id, submitted_at, submission_status, submission_content) 
+                                  VALUES ('$quiz_id', '$logged_in_student_id', NOW(), '$submission_status', '$answers_json')";
+        $db->query($sql_insert_submission);
 
         // Save the final result
         $sql_insert_result = "INSERT INTO assessment_results (assessment_id, student_user_id, marks_obtained, grade_id, evaluated_at) 
                               VALUES ('$quiz_id', '$logged_in_student_id', '$total_score', $grade_id, NOW())";
         $db->query($sql_insert_result);
 
-        $db->commit();
-        header("Location: view_quiz_result.php?quiz_id=$quiz_id");
+        // Update quiz status to 'Graded' if it's currently 'Published' and results are being entered for the first time.
+        // This is more complex and might be better handled by a teacher action, or after all students attempt.
+        // For now, we will leave the assessment status as is, unless you have specific requirements.
+
+        $db->commit(); // Commit transaction
+        header("Location: view_quiz_result.php?quiz_id=$quiz_id"); // Redirect to view results
         exit();
 
     } catch (Exception $e) {
-        $db->rollback();
-        die("An error occurred while saving your results. Please try again.");
+        $db->rollback(); // Rollback transaction on error
+        die("An error occurred while saving your results. Please try again. Error: " . $e->getMessage()); // Show actual error for debugging
     }
 }
 
@@ -289,7 +313,7 @@ $result_questions = $db->query($sql_questions);
             timeInSeconds--;
         }, 1000);
 
-        // --- CORRECTED SUBMISSION LOGIC ---
+         // --- CORRECTED SUBMISSION LOGIC ---
         quizForm.addEventListener('submit', function(e) {
             // Get all the question cards to find the groups
             const questionCards = document.querySelectorAll('.question-card');

@@ -13,15 +13,15 @@ if ($quiz_id === 0) {
 }
 
 // --- Fetch Quiz Details to display in header ---
-$sql_quiz = "SELECT title, (SELECT SUM(marks) FROM assessment_questions WHERE assessment_id = a.id) as total_marks FROM assessments a WHERE a.id = '$quiz_id' AND a.assessment_type = 'Quiz'";
+$sql_quiz = "SELECT title, (SELECT SUM(marks) FROM assessment_questions WHERE assessment_id = a.id) as total_marks FROM assessments a WHERE a.id = '$quiz_id' AND a.assessment_type_id = 3"; // Changed to assessment_type_id = 3 (for Quiz)
 $result_quiz = $db->query($sql_quiz);
 if ($result_quiz->num_rows === 0) {
-    header("Location: manage_quizzes.php?status=notfound");
+    header("Location: manage_quizzes.php?status=notfound&message=Quiz not found or is not a Quiz type."); // More specific message
     exit();
 }
-$quiz_data = $result_quiz->fetch_assoc();
-$quiz_title = $quiz_data['title'];
-$total_marks = $quiz_data['total_marks'] ?? 0;
+$quiz_data = $result_quiz->fetch_assoc(); // Fetch quiz data
+$quiz_title = $quiz_data['title']; // Quiz title
+$total_marks = $quiz_data['total_marks'] ?? 0; // Total marks
 
 // --- Handle POST requests for ADDING, UPDATING, or DELETING questions ---
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -38,9 +38,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $correct_answer = dataClean($correct_answer ?? '');
         $marks = dataClean($marks ?? '');
 
-        if (!empty($question_text) && !empty($correct_answer) && is_numeric($marks) && $marks > 0) {
+        if (empty($messages['error'])) { // Check if there are any validation errors
+            // question_type is hardcoded to 'MCQ' as per table definition for now
             $sql_add = "INSERT INTO assessment_questions (assessment_id, question_text, question_type, option_a, option_b, option_c, option_d, correct_answer, marks)
-                        VALUES ('$quiz_id', '$question_text', 'MCQ', '$option_a', '$option_b', '$option_c', '$option_d', '$correct_answer', '$marks')";
+                        VALUES ('$quiz_id', '$question_text', 'MCQ', '$option_a', '$option_b', " . (empty($option_c) ? "NULL" : "'$option_c'") . ", " . (empty($option_d) ? "NULL" : "'$option_d'") . ", '$correct_answer', '$marks')";
             if ($db->query($sql_add)) {
                 // After adding a question, update the total marks in the assessments table
                 $sql_update_marks = "UPDATE assessments SET max_marks = (SELECT SUM(marks) FROM assessment_questions WHERE assessment_id = '$quiz_id') WHERE id = '$quiz_id'";
@@ -50,8 +51,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             } else {
                 $messages['error'] = "Error adding question: " . $db->error;
             }
-        } else {
-            $messages['error'] = "Please fill all required fields correctly.";
         }
     }
 
@@ -69,6 +68,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             } else {
                 $messages['error'] = "Error deleting question: " . $db->error;
             }
+        } else {
+            $messages['error'] = "Invalid question ID for deletion.";
         }
     }
 }
@@ -76,7 +77,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 // --- Fetch all existing questions for this quiz ---
 $sql_questions = "SELECT * FROM assessment_questions WHERE assessment_id = '$quiz_id' ORDER BY id ASC";
 $result_questions = $db->query($sql_questions);
-$question_count = $result_questions->num_rows;
+$question_count = $result_questions->num_rows; // Update count after any add/delete operations
 
 ?>
 

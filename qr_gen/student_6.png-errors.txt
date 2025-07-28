@@ -18,3 +18,23 @@
 <b>Warning</b>:  Trying to access array offset on value of type int in <b>E:\laragon\www\stmgt\qr_gen\qrsplit.php</b> on line <b>62</b><br />
 <br />
 <b>Deprecated</b>:  ord(): Passing null to parameter #1 ($character) of type string is deprecated in <b>E:\laragon\www\stmgt\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+2025-07-27 07:17:35: <br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>E:\laragon\www\stmgt\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>E:\laragon\www\stmgt\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Deprecated</b>:  ord(): Passing null to parameter #1 ($character) of type string is deprecated in <b>E:\laragon\www\stmgt\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>E:\laragon\www\stmgt\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Deprecated</b>:  ord(): Passing null to parameter #1 ($character) of type string is deprecated in <b>E:\laragon\www\stmgt\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+2025-07-27 07:45:37: <br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>E:\laragon\www\stmgt\qr_gen\qrsplit.php</b> on line <b>71</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>E:\laragon\www\stmgt\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Deprecated</b>:  ord(): Passing null to parameter #1 ($character) of type string is deprecated in <b>E:\laragon\www\stmgt\qr_gen\qrsplit.php</b> on line <b>53</b><br />
+<br />
+<b>Warning</b>:  Trying to access array offset on value of type int in <b>E:\laragon\www\stmgt\qr_gen\qrsplit.php</b> on line <b>62</b><br />
+<br />
+<b>Deprecated</b>:  ord(): Passing null to parameter #1 ($character) of type string is deprecated in <b>E:\laragon\www\stmgt\qr_gen\qrsplit.php</b> on line <b>62</b><br />

@@ -1,9 +1,13 @@
 <?php
 ob_start();
+<<<<<<< HEAD
+include '../../init.php';
+=======
 include '../../init.php'; // ඔබගේ init.php ගොනුවට නිවැරදි path එක දෙන්න
 if (!hasPermission($_SESSION['user_id'], 'manage_student_enrollment')) {
     // Set error message in session
     $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
+>>>>>>> origin/geek
 
     // Redirect back using HTTP_REFERER if available, else fallback to dashboard
     $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
@@ -23,9 +27,7 @@ show_status_message();
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-header">
-                    <h6 class="card-title" style="font-size: 1.05rem !important;">Enrollment List</h6>
-                </div>
+                <div class="card-header"><h6 class="card-title">Enrollment List</h6></div>
                 <div class="card-body">
                     <table id="enrollmentTable" class="table table-bordered table-striped">
                         <thead>
@@ -40,43 +42,17 @@ show_status_message();
                         <tbody>
                             <?php
                             $db = dbConn();
-                            $sql = "SELECT
-                                        e.id AS enrollment_id,
-                                        e.status AS enrollment_status,
-                                        e.enrollment_date,
-                                        u.FirstName,
-                                        u.LastName,
-                                        u.ProfileImage,
-                                        s.subject_name,
-                                        cl.level_name,
-                                        ct.type_name AS class_type
-                                    FROM
-                                        enrollments AS e
-                                    JOIN
-                                        users AS u ON e.student_user_id = u.Id
-                                    JOIN
-                                        classes AS c ON e.class_id = c.id
-                                    JOIN
-                                        subjects AS s ON c.subject_id = s.id
-                                    JOIN
-                                        class_levels AS cl ON c.class_level_id = cl.id
-                                    JOIN
-                                        class_types AS ct ON c.class_type_id = ct.id
-                                    WHERE
-                                        u.user_role_id = 4
-                                    ORDER BY
-                                        e.id DESC";
+                            $sql = "SELECT e.id AS enrollment_id, e.status AS enrollment_status, e.enrollment_date, u.FirstName, u.LastName, u.ProfileImage, s.subject_name, cl.level_name, ct.type_name AS class_type FROM enrollments AS e JOIN users AS u ON e.student_user_id = u.Id JOIN classes AS c ON e.class_id = c.id JOIN subjects AS s ON c.subject_id = s.id JOIN class_levels AS cl ON c.class_level_id = cl.id JOIN class_types AS ct ON c.class_type_id = ct.id WHERE u.user_role_id = 4 ORDER BY e.id DESC";
                             $result = $db->query($sql);
-                            while ($row = $result->fetch_assoc()) {
+                            if ($result && $result->num_rows > 0) {
+                                while ($row = $result->fetch_assoc()) {
                             ?>
                             <tr>
                                 <td>
-                                    <img src="../../web/uploads/profile_images/<?= htmlspecialchars(!empty($row['ProfileImage']) ? $row['ProfileImage'] : 'default_avatar.png') ?>"
-                                        class="rounded-circle me-2" width="40" height="40" style="object-fit:cover;">
+                                    <img src="../../web/uploads/profile_images/<?= htmlspecialchars(!empty($row['ProfileImage']) ? $row['ProfileImage'] : 'default_avatar.png') ?>" class="rounded-circle me-2" width="40" height="40" style="object-fit:cover;">
                                     <?= htmlspecialchars($row['FirstName'] . ' ' . $row['LastName']) ?>
                                 </td>
-                                <td><?= htmlspecialchars($row['level_name'] . ' | ' . $row['subject_name'] . ' (' . $row['class_type'] . ')') ?>
-                                </td>
+                                <td><?= htmlspecialchars($row['level_name'] . ' | ' . $row['subject_name'] . ' (' . $row['class_type'] . ')') ?></td>
                                 <td><?= htmlspecialchars($row['enrollment_date']) ?></td>
                                 <td><?= display_status_badge($row['enrollment_status']) ?></td>
                                 <td>
@@ -111,10 +87,6 @@ show_status_message();
                                                     <?= $row['enrollment_status'] == 'cancelled' ? 'selected' : '' ?>>
                                                     Cancelled</option>
                                             </select>
-                                            <button type="submit" name="update_status" class="btn btn-primary btn-sm"
-                                                title="Update Status"
-                                                style="border-top-left-radius: 0; border-bottom-left-radius: 0;"><i
-                                                    class="fas fa-check"></i></button>
                                         </form>
                                         <?php } ?>
                                         <?php if (hasPermission($_SESSION['user_id'], 'delete_student_enrollment')) { ?>
@@ -132,7 +104,10 @@ show_status_message();
                                     </div>
                                 </td>
                             </tr>
-                            <?php } ?>
+                            <?php 
+                                }
+                            }
+                            ?>
                         </tbody>
                     </table>
                 </div>
@@ -142,29 +117,22 @@ show_status_message();
 </div>
 
 <script>
-// Delete confirmation function (දැන් නිවැරදිව ක්‍රියා කරයි)
-function confirmDelete(id) {
-    if (confirm("Are you sure you want to delete this enrollment record? This action cannot be undone.")) {
-        document.getElementById('deleteForm' + id).submit();
-    }
+function confirmDeleteSweet(id) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById('deleteForm' + id).submit();
+        }
+    })
 }
-
-// DataTable initialization
-$(function() {
-    $("#enrollmentTable")
-        .DataTable({
-            "responsive": true,
-            "lengthChange": true,
-            "autoWidth": false,
-            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
-            "order": [
-                [2, "desc"]
-            ]
-        })
-        .buttons()
-        .container()
-        .appendTo("#enrollmentTable_wrapper .col-md-6:eq(0)");
-});
+$(document).ready(function() { $('#enrollmentTable').DataTable(); });
 </script>
 
 <?php

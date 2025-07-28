@@ -52,7 +52,7 @@ show_status_message();
                                 <th>Telephone</th>
                                 <th>Role</th>
                                 <th>Status</th>
-                                <th>Actions</th>
+                                <th>Actionss</th>
                             </tr>
                         </thead>
                         <tbody>

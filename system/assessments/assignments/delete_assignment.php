@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id'])) {
     } else {
         // If Assignment is NOT in use, proceed with deletion from 'assessments' table
         // Ensure it's an Assignment type we are deleting
-        $sql_delete = "DELETE FROM assessments WHERE id = '$id' AND assessment_type = 'Assignment'";
+        $sql_delete = "DELETE FROM assessments WHERE id = '$id' AND assessment_type_id = 2";
         if ($db->query($sql_delete)) {
             header("Location: manage_assignments.php?status=deleted");
             exit();

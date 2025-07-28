@@ -17,14 +17,23 @@ if (!hasPermission($_SESSION['user_id'], 'assignments_result')) {
 //     exit();
 // }
 
-$db = dbConn();
+// --- Security Check ---
+if (!isset($_SESSION['user_id'])) {
+    header("Location: " . WEB_URL . "auth/login.php"); // Redirect to system login
+    exit();
+}
+$logged_in_user_id = (int)$_SESSION['user_id']; // Get user's ID
+$user_role_name = strtolower($_SESSION['user_role_name'] ?? '');
 
-// Get user's ID (still needed for 'evaluated_by_teacher_id')
-$logged_in_user_id = (int)($_SESSION['user_id'] ?? 0); 
+// Allow access only if Admin or Teacher
+if ($user_role_name !== 'admin' && $user_role_name !== 'teacher') { 
+    header("Location: manage_assignments.php?status=error&message=Access Denied: You do not have permission to enter results.");
+    exit();
+}
 
-$messages = [];
+$messages = []; // For displaying user messages
 
-$assignment_id = (int)($_REQUEST['assignment_id'] ?? 0); 
+$assignment_id = (int)($_REQUEST['assignment_id'] ?? 0); // Get assignment ID from GET or POST
 
 if ($assignment_id === 0) {
     header("Location: manage_assignments.php?status=notfound&message=Assignment ID not provided.");
@@ -32,6 +41,7 @@ if ($assignment_id === 0) {
 }
 
 // --- Fetch Assignment Details ---
+// UPDATED: Use assessment_type_id for filtering
 $sql_assignment = "SELECT 
                         a.id, a.title, a.max_marks, a.due_date, a.status,
                         cl.level_name, s.subject_name, ct.type_name,
@@ -41,14 +51,14 @@ $sql_assignment = "SELECT
                     JOIN class_levels cl ON c.class_level_id = cl.id
                     JOIN subjects s ON c.subject_id = s.id
                     JOIN class_types ct ON c.class_type_id = ct.id
-                    WHERE a.id = '$assignment_id' AND a.assessment_type = 'Assignment'";
+                    WHERE a.id = '$assignment_id' AND a.assessment_type_id = 2"; // Changed to assessment_type_id = 2 (for Assignment)
 $result_assignment = $db->query($sql_assignment);
 
 if ($result_assignment->num_rows === 0) {
     header("Location: manage_assignments.php?status=notfound&message=Assignment not found or is not an Assignment type.");
     exit();
 }
-$assignment_details = $result_assignment->fetch_assoc();
+$assignment_details = $result_assignment->fetch_assoc(); // Fetch assignment details
 
 
 // --- Fetch all Grades (A, B, C etc.) for auto-grading logic ---
@@ -59,15 +69,13 @@ $grades_percentage_map = []; // Grade ID => {min, max} %
 if ($all_grades_result) {
     while($grade = $all_grades_result->fetch_assoc()) {
         $grades_map[$grade['id']] = $grade['grade_name'];
-        $grades_percentage_map[$grade['id']] = ['min' => $grade['min_percentage'], 'max' => $grade['max_percentage']];
+        // Ensure values are floated for correct comparison later
+        $grades_percentage_map[$grade['id']] = ['min' => (float)$grade['min_percentage'], 'max' => (float)$grade['max_percentage']];
     }
 }
 
 
 // --- Handle POST submission for entering results ---
-// =================================================================================================
-// START: REVISED LOGIC FOR SAVING RESULTS
-// =================================================================================================
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['action'])) { // Results form submission
     $db->begin_transaction();
     try {
@@ -77,21 +85,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['action'])) { // Resul
                 $marks_obtained_input = $data['marks_obtained'] ?? '';
                 $remarks = dataClean($data['remarks'] ?? ''); 
 
-                // --- Process only if marks are entered ---
-                // If marks field is empty for a student, we will simply skip them.
-                // This prevents deleting their existing marks if the teacher doesn't update them.
+                // Process only if marks are entered and valid
                 if (is_numeric($marks_obtained_input) && $marks_obtained_input !== '') {
                     
                     $marks_obtained = (float)$marks_obtained_input;
 
                     // Validate marks are within the allowed range
                     if ($marks_obtained < 0 || $marks_obtained > (float)$assignment_details['max_marks']) {
-                        // You can choose to show an error or just skip invalid entries.
-                        // Here, we'll just skip to prevent breaking the whole transaction.
+                        // Skip invalid entries to prevent breaking the whole transaction.
                         continue; 
                     }
                     
-                    // --- Auto-determine Grade based on percentage ---
+                    // Auto-determine Grade based on percentage
                     $percentage_obtained = ($assignment_details['max_marks'] > 0) ? ($marks_obtained / (float)$assignment_details['max_marks']) * 100 : 0;
                     $grade_id = 'NULL'; // Default to NULL
                     foreach ($grades_percentage_map as $g_id => $range) {
@@ -103,13 +108,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['action'])) { // Resul
                         }
                     }
 
-                    // --- UPSERT LOGIC (Update or Insert) ---
-                    // This is the core fix. We check if a record exists first.
+                    // UPSERT LOGIC (Update or Insert)
                     $sql_check = "SELECT id FROM assessment_results WHERE assessment_id = '$assignment_id' AND student_user_id = '$student_user_id'";
                     $result_check = $db->query($sql_check);
 
                     if ($result_check && $result_check->num_rows > 0) {
-                        // --- UPDATE existing record ---
+                        // UPDATE existing record
                         $sql_update_result = "UPDATE assessment_results 
                                               SET marks_obtained = '$marks_obtained', 
                                                   grade_id = $grade_id, 
@@ -121,7 +125,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['action'])) { // Resul
                             throw new Exception("SQL Update Error: " . $db->error);
                         }
                     } else {
-                        // --- INSERT new record ---
+                        // INSERT new record
                         $sql_insert_result = "INSERT INTO assessment_results (assessment_id, student_user_id, marks_obtained, grade_id, remarks, evaluated_by_teacher_id, evaluated_at)
                                               VALUES ('$assignment_id', '$student_user_id', '$marks_obtained', $grade_id, '$remarks', " . ($logged_in_user_id > 0 ? "'$logged_in_user_id'" : 'NULL') . ", NOW())";
                         if (!$db->query($sql_insert_result)) {
@@ -138,23 +142,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && !isset($_POST['action'])) { // Resul
             $db->query($sql_update_assessment_status);
         }
 
-        $db->commit();
+        $db->commit(); // Commit transaction
         header("Location: enter_results.php?assignment_id=$assignment_id&status=updated&message=Assignment results saved successfully!");
         exit();
 
     } catch (Exception $e) {
-        $db->rollback();
+        $db->rollback(); // Rollback transaction on error
         $messages['main'] = "Database error: Could not enter results. " . $e->getMessage();
     }
 }
-// =================================================================================================
-// END: REVISED LOGIC
-// =================================================================================================
 
 
 // --- Fetch Students for Results Entry ---
-// This query now fetches ALL enrolled students for the class, not just those who submitted.
-// This allows the teacher to see the full class list.
 $sql_students_for_results = "SELECT 
                                 u.Id as student_user_id, 
                                 u.FirstName, 
@@ -182,7 +181,7 @@ $result_students = $db->query($sql_students_for_results);
 ?>
 
 <div class="container-fluid">
-    <?php show_status_message(); ?>
+    <?php show_status_message(); // Call the common function to show toast notifications ?>
 
     <div class="row mb-4">
         <div class="d-flex content-header-text">
@@ -199,7 +198,6 @@ $result_students = $db->query($sql_students_for_results);
                 <small class="text-white-50">Due Date: <?= htmlspecialchars(date('Y-m-d H:i A', strtotime($assignment_details['due_date']))) ?></small>
             </h3>
         </div>
-        <!-- IMPORTANT: Removed enctype="multipart/form-data" as we removed the file upload form -->
         <form method="POST" action="<?= htmlspecialchars($_SERVER['PHP_SELF']) . '?assignment_id=' . $assignment_id ?>">
             <div class="card-body">
                 <?php if(!empty($messages['main'])): ?>
@@ -217,7 +215,6 @@ $result_students = $db->query($sql_students_for_results);
                                 <th>Grade</th>
                                 <th>Remarks</th>
                                 <th>Submission Status</th>
-                                <!-- CHANGED: Removed the confusing upload form from this page -->
                                 <th>Submitted File</th>
                             </tr>
                         </thead>
@@ -261,6 +258,15 @@ $result_students = $db->query($sql_students_for_results);
                                                             $submission_status_text = 'Late Submission';
                                                         }
                                                         break;
+                                                    case 'Graded': // Added 'Graded' case
+                                                        $submission_status_class = 'bg-info';
+                                                        break;
+                                                    case 'Pending': // Added 'Pending' case
+                                                        $submission_status_class = 'bg-primary';
+                                                        break;
+                                                    case 'Late Submission': // Explicitly handle if already late
+                                                        $submission_status_class = 'bg-warning text-dark';
+                                                        break;
                                                     default: $submission_status_class = 'bg-secondary'; break;
                                                 }
                                             } else {
@@ -273,9 +279,9 @@ $result_students = $db->query($sql_students_for_results);
                                             <span class="badge <?= $submission_status_class ?>"><?= $submission_status_text ?></span>
                                         </td>
                                         <td>
-                                            <!-- SIMPLIFIED: Only show download link if file exists. Removed upload form. -->
+                                           
                                             <?php if (!empty($student['file_path'])): ?>
-                                                <a href="<?= SYS_URL ?>web/uploads/submissions/<?= htmlspecialchars($student['file_name']) ?>" target="_blank" class="btn btn-sm btn-outline-info" title="Download Submission">
+                                                <a href="<?= WEB_URL ?>web/uploads/submissions/<?= htmlspecialchars($student['file_name']) ?>" target="_blank" class="btn btn-sm btn-outline-info" title="Download Submission">
                                                     <i class="fas fa-download"></i> Download
                                                 </a>
                                             <?php else: ?>

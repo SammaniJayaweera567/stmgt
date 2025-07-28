@@ -67,9 +67,9 @@ $db = dbConn();
                                         JOIN class_levels cl ON c.class_level_id = cl.id
                                         JOIN subjects s ON c.subject_id = s.id
                                         JOIN class_types ct ON c.class_type_id = ct.id
-                                        WHERE a.assessment_type = 'Quiz'
+                                        WHERE a.assessment_type_id = 3 -- Changed from assessment_type to assessment_type_id = 3 (for Quiz)
                                         ORDER BY a.created_at DESC";
-                                $result = $db->query($sql);
+                                $result = $db->query($sql); // Line 61
 
                                 if ($result->num_rows > 0) {
                                     while ($row = $result->fetch_assoc()) {
@@ -129,9 +129,9 @@ $db = dbConn();
 </div>
 
 <script>
-    $(document).ready(function() { 
-        $('#quizzesTable').DataTable(); 
-    });
+$(document).ready(function() {
+    $('#quizzesTable').DataTable();
+});
 </script>
 
 <?php

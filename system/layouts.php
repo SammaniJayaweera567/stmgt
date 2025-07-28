@@ -81,12 +81,12 @@
                 <li class="nav-item">
                     <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
                 </li>
-                <li class="nav-item d-none d-sm-inline-block">
+                <!-- <li class="nav-item d-none d-sm-inline-block">
                     <a href="index3.html" class="nav-link">Home</a>
                 </li>
                 <li class="nav-item d-none d-sm-inline-block">
                     <a href="#" class="nav-link">Contact</a>
-                </li>
+                </li> -->
             </ul>
 
             <ul class="navbar-nav ml-auto">
@@ -362,12 +362,11 @@
 
                          <?php if (hasPermission($_SESSION['user_id'], 'subject')) { ?>
                         <li class="nav-item">
-                            <a href="#" class="nav-link active">
-                                <img src="<?= SYS_URL ?>dist/img/book.png" alt="Users" width="22" height="22"
+                            <a href="<?= SYS_URL ?>subjects/manage_subjects.php" class="nav-link active">
+                                <img src="<?= SYS_URL ?>dist/img/book.png" alt="Teachers" width="22" height="22"
                                     style="margin-right: 8px;">
                                 <p>
-                                    Subjects
-                                    <i class="right fas fa-angle-left"></i>
+                                    Manage Subjects
                                 </p>
                             </a>
                             <ul class="nav nav-treeview">
@@ -385,8 +384,8 @@
 
                         <?php if (hasPermission($_SESSION['user_id'], 'parent_list')) { ?>
                         <li class="nav-item">
-                            <a href="#" class="nav-link active">
-                                <img src="<?= SYS_URL ?>dist/img/friends.png" alt="Users" width="22" height="22"
+                            <a href="<?= SYS_URL ?>parents/manage_parents.php" class="nav-link active">
+                                <img src="<?= SYS_URL ?>dist/img/classroom.png" alt="Teachers" width="22" height="22"
                                     style="margin-right: 8px;">
                                 <p>
                                     Parent List
@@ -407,12 +406,21 @@
 
                         <?php if (hasPermission($_SESSION['user_id'], 'student_enrollment')) { ?>
                         <li class="nav-item">
-                            <a href="#" class="nav-link active">
-                                <img src="<?= SYS_URL ?>dist/img/student.png" alt="Users" width="22" height="22"
+                            <a href="<?= SYS_URL ?>student-enrollments/manage_enrollments.php" class="nav-link active">
+                                <img src="<?= SYS_URL ?>dist/img/student.png" alt="Teachers" width="22" height="22"
                                     style="margin-right: 8px;">
                                 <p>
-                                    Student Enrollments
-                                    <i class="right fas fa-angle-left"></i>
+                                    Manage Student Enrollment
+                                </p>
+                            </a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a href="<?= SYS_URL ?>students/manage_students.php" class="nav-link active">
+                                <img src="<?= SYS_URL ?>dist/img/classroom.png" alt="Teachers" width="22" height="22"
+                                    style="margin-right: 8px;">
+                                <p>
+                                    Student List
                                 </p>
                             </a>
                             <ul class="nav nav-treeview">
@@ -445,15 +453,22 @@
                                 <img src="<?= SYS_URL ?>dist/img/calendar.png" alt="Users" width="22" height="22"
                                     style="margin-right: 8px;">
                                 <p>
-                                    Daily Attendance
+                                    Manage Daily Attendance
+                                    <i class="right fas fa-angle-left"></i>
                                 </p>
                             </a>
                             <ul class="nav nav-treeview">
                                  <?php if (hasPermission($_SESSION['user_id'], 'manage_attendance')) { ?>
                                 <li class="nav-item">
+                                    <a href="<?= SYS_URL ?>attendance/mark_attendance.php" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Mark Attendance</p>
+                                    </a>
+                                </li>
+                                <li class="nav-item">
                                     <a href="<?= SYS_URL ?>attendance/view_attendance.php" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
-                                        <p>Manage Daily Attendance</p>
+                                        <p>View Attendance</p>
                                     </a>
                                 </li>
                                 <?php } ?>
@@ -495,7 +510,7 @@
                             <ul class="nav nav-treeview">
                                 <?php if (hasPermission($_SESSION['user_id'], 'manage_assesments')) { ?>
                                 <li class="nav-item">
-                                    <a href="<?= SYS_URL ?>assessments/manage_grades.php" class="nav-link">
+                                    <a href="<?= SYS_URL ?>assessments/grades/manage_grades.php" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Manage Grades</p>
                                     </a>
@@ -695,7 +710,8 @@
                                          <?php } ?>
                                         <?php if (hasPermission($_SESSION['user_id'], 'student_report')) { ?>
                                         <li class="nav-item">
-                                            <a href="<?= SYS_URL ?>settings/reports/select_student.php" class="nav-link">
+                                            <a href="<?= SYS_URL ?>settings/reports/select_student.php"
+                                                class="nav-link">
                                                 <i class="fas fa-genderless nav-icon"
                                                     style="font-size: 0.6rem; vertical-align: middle;"></i>
                                                 <p>Select Student</p>
@@ -704,7 +720,8 @@
                                          <?php } ?>
                                         <?php if (hasPermission($_SESSION['user_id'], 'student_progress_report')) { ?>
                                         <li class="nav-item">
-                                            <a href="<?= SYS_URL ?>settings/reports/generate_progress_report.php" class="nav-link">
+                                            <a href="<?= SYS_URL ?>settings/reports/generate_progress_report.php"
+                                                class="nav-link">
                                                 <i class="fas fa-genderless nav-icon"
                                                     style="font-size: 0.6rem; vertical-align: middle;"></i>
                                                 <p>Generate Students Progress Report</p>
@@ -745,12 +762,12 @@
                         <div class="col-sm-6">
                             <h1 class="m-0">Dashboard</h1>
                         </div>
-                        <div class="col-sm-6">
+                        <!-- <div class="col-sm-6">
                             <ol class="breadcrumb float-sm-right">
                                 <li class="breadcrumb-item"><a href="#">Home</a></li>
                                 <li class="breadcrumb-item active">Dashboard v1</li>
                             </ol>
-                        </div>
+                        </div> -->
                     </div>
                 </div>
             </div>

@@ -70,16 +70,31 @@ if (!empty($children)) {
 // --- 4. Fetch all data for the SELECTED CHILD ---
 if ($selected_child_id > 0) {
     // Fetch Exam Results
-    $sql_selected_student_exam_results = "SELECT a.title, a.assessment_date, a.max_marks, ar.marks_obtained, gr.grade_name FROM assessments a LEFT JOIN assessment_results ar ON a.id = ar.assessment_id AND ar.student_user_id = '$selected_child_id' JOIN classes c ON a.class_id = c.id LEFT JOIN grades gr ON ar.grade_id = gr.id WHERE a.assessment_type = 'Exam' AND a.status IN ('Published', 'Graded', 'Archived') AND c.id IN (SELECT class_id FROM enrollments WHERE student_user_id = '$selected_child_id' AND status = 'active') ORDER BY a.assessment_date DESC";
-    $result_selected_student_exam_results = $db->query($sql_selected_student_exam_results);
-    if ($result_selected_student_exam_results) {
-        while ($row = $result_selected_student_exam_results->fetch_assoc()) {
-            $exam_results_for_display[] = $row;
-        }
+$sql_selected_student_exam_results = "SELECT a.title, a.assessment_date, a.max_marks, ar.marks_obtained, gr.grade_name 
+                                    FROM assessments a 
+                                    LEFT JOIN assessment_results ar ON a.id = ar.assessment_id AND ar.student_user_id = '$selected_child_id' 
+                                    JOIN classes c ON a.class_id = c.id 
+                                    LEFT JOIN grades gr ON ar.grade_id = gr.id 
+                                    WHERE a.assessment_type_id = 1 AND a.status IN ('Published', 'Graded', 'Archived') 
+                                    AND c.id IN (SELECT class_id FROM enrollments WHERE student_user_id = '$selected_child_id' AND status = 'active') 
+                                    ORDER BY a.assessment_date DESC";
+$result_selected_student_exam_results = $db->query($sql_selected_student_exam_results);
+if ($result_selected_student_exam_results) {
+    while ($row = $result_selected_student_exam_results->fetch_assoc()) {
+        $exam_results_for_display[] = $row;
     }
+}
 
-    // Fetch Assignment Results
-    $sql_assignment_results = "SELECT a.title, s.subject_name, a.due_date, a.max_marks, ar.marks_obtained, gr.grade_name FROM assessments a JOIN classes c ON a.class_id = c.id JOIN subjects s ON c.subject_id = s.id LEFT JOIN assessment_results ar ON a.id = ar.assessment_id AND ar.student_user_id = '$selected_child_id' LEFT JOIN grades gr ON ar.grade_id = gr.id WHERE a.assessment_type = 'Assignment' AND a.status IN ('Graded', 'Archived') AND c.id IN (SELECT class_id FROM enrollments WHERE student_user_id = '$selected_child_id' AND status = 'active') ORDER BY a.due_date DESC";
+    // Fetch Assignment Results - UPDATED
+    $sql_assignment_results = "SELECT a.title, s.subject_name, a.due_date, a.max_marks, ar.marks_obtained, gr.grade_name 
+                                FROM assessments a 
+                                JOIN classes c ON a.class_id = c.id 
+                                JOIN subjects s ON c.subject_id = s.id 
+                                LEFT JOIN assessment_results ar ON a.id = ar.assessment_id AND ar.student_user_id = '$selected_child_id' 
+                                LEFT JOIN grades gr ON ar.grade_id = gr.id 
+                                WHERE a.assessment_type_id = 2 AND a.status IN ('Graded', 'Archived') 
+                                AND c.id IN (SELECT class_id FROM enrollments WHERE student_user_id = '$selected_child_id' AND status = 'active') 
+                                ORDER BY a.due_date DESC";
     $result_assignment_results = $db->query($sql_assignment_results);
     if ($result_assignment_results) {
         while ($row = $result_assignment_results->fetch_assoc()) {
@@ -88,7 +103,17 @@ if ($selected_child_id > 0) {
     }
 
     // Fetch Quiz Results
-    $sql_quiz_results = "SELECT a.title, a.max_marks, ar.marks_obtained, gr.grade_name, CONCAT(cl.level_name, ' - ', s.subject_name, ' (', ct.type_name, ')') as class_full_name FROM assessment_results ar JOIN assessments a ON ar.assessment_id = a.id JOIN classes c ON a.class_id = c.id JOIN class_levels cl ON c.class_level_id = cl.id JOIN subjects s ON c.subject_id = s.id JOIN class_types ct ON c.class_type_id = ct.id LEFT JOIN grades gr ON ar.grade_id = gr.id WHERE ar.student_user_id = '$selected_child_id' AND a.assessment_type = 'Quiz' ORDER BY a.created_at DESC";
+// Fetch Quiz Results - UPDATED
+    $sql_quiz_results = "SELECT a.title, a.max_marks, ar.marks_obtained, gr.grade_name, CONCAT(cl.level_name, ' - ', s.subject_name, ' (', ct.type_name, ')') as class_full_name 
+                            FROM assessment_results ar 
+                            JOIN assessments a ON ar.assessment_id = a.id 
+                            JOIN classes c ON a.class_id = c.id 
+                            JOIN class_levels cl ON c.class_level_id = cl.id 
+                            JOIN subjects s ON c.subject_id = s.id 
+                            JOIN class_types ct ON c.class_type_id = ct.id 
+                            LEFT JOIN grades gr ON ar.grade_id = gr.id 
+                            WHERE ar.student_user_id = '$selected_child_id' AND a.assessment_type_id = 3 
+                            ORDER BY a.created_at DESC";
     $result_quiz_results = $db->query($sql_quiz_results);
     if ($result_quiz_results) {
         while ($row = $result_quiz_results->fetch_assoc()) {
@@ -140,6 +165,28 @@ if ($selected_child_id > 0) {
     $db->query($sql_mark_as_read);
 
 // END of the code block to paste
+
+ // --- Fetch Attendance Summary for the selected child ---
+     $attendance_for_display = [];
+    $sql_attendance = "SELECT 
+                            CONCAT(cl.level_name, ' | ', s.subject_name, ' (', ct.type_name, ')') AS class_description,
+                            SUM(CASE WHEN att.status = 'Present' THEN 1 ELSE 0 END) AS present_days,
+                            SUM(CASE WHEN att.status = 'Absent' THEN 1 ELSE 0 END) AS absent_days
+                       FROM attendance AS att
+                       JOIN classes AS c ON att.class_id = c.id
+                       JOIN subjects AS s ON c.subject_id = s.id
+                       JOIN class_levels AS cl ON c.class_level_id = cl.id
+                       JOIN class_types AS ct ON c.class_type_id = ct.id
+                       WHERE att.student_user_id = '$selected_child_id'
+                       GROUP BY att.class_id
+                       ORDER BY class_description";
+    $result_attendance = $db->query($sql_attendance);
+    if ($result_attendance) {
+        while ($row = $result_attendance->fetch_assoc()) {
+            $attendance_for_display[] = $row;
+        }
+    }
+
 }
 ?>
 <!DOCTYPE html>
@@ -331,7 +378,7 @@ if ($selected_child_id > 0) {
 
             <!-- Parent Teacher Communication -->
             <div class="row mt-3">
-                <div class="col-12">
+                <div class="col-6">
                     <div class="dashboard-card">
                         <div class="card-title-icon">
                             <span class="icon" style="background-color: #6f42c1;"><i
@@ -364,6 +411,44 @@ if ($selected_child_id > 0) {
                         </div>
                         <?php else: ?>
                         <p class="text-center text-muted">No messages found from teachers for this child.</p>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <div class="col-6">
+                    <div class="dashboard-card">
+                        <div class="card-title-icon">
+                            <span class="icon" style="background-color: #ffc107;"><i
+                                    class="fas fa-user-check"></i></span>
+                            <h3>Attendance Progress for <?= htmlspecialchars($selected_child_details['FirstName']) ?>
+                            </h3>
+                        </div>
+                        <?php if (!empty($attendance_for_display)): ?>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Class</th>
+                                        <th class="text-center">Present Days</th>
+                                        <th class="text-center">Absent Days</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php foreach ($attendance_for_display as $att_record): ?>
+                                    <tr>
+                                        <td><?= htmlspecialchars($att_record['class_description']) ?></td>
+                                        <td class="text-center">
+                                            <span class="badge bg-success"><?= $att_record['present_days'] ?></span>
+                                        </td>
+                                        <td class="text-center">
+                                            <span class="badge bg-danger"><?= $att_record['absent_days'] ?></span>
+                                        </td>
+                                    </tr>
+                                    <?php endforeach; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                        <?php else: ?>
+                        <p class="text-center text-muted">No attendance records found for this child yet.</p>
                         <?php endif; ?>
                     </div>
                 </div>

@@ -16,54 +16,48 @@ if (!hasPermission($_SESSION['user_id'], 'edit_exam')) {
 // $user_role_name = ''; 
 
 $db = dbConn();
+$messages = [];
+$logged_in_user_id = (int)$_SESSION['user_id'];
+$user_role_name = strtolower($_SESSION['user_role_name'] ?? '');
 
-// Fetch user's role name from the database
-if ($logged_in_user_id > 0) {
-    $sql_user_role = "SELECT ur.RoleName FROM users u JOIN user_roles ur ON u.user_role_id = ur.Id WHERE u.Id = '$logged_in_user_id'";
-    $result_user_role = $db->query($sql_user_role);
-    if ($result_user_role && $result_user_role->num_rows > 0) {
-        $user_role_name = strtolower($result_user_role->fetch_assoc()['RoleName']);
-    }
-}
-
-// Allow access only if the user ID is 1 (Super Admin) OR the role is 'admin' or 'teacher'.
-if ($logged_in_user_id !== 1 && $user_role_name !== 'admin' && $user_role_name !== 'teacher') { 
-    die("Access Denied: You do not have permission to enter exam results.");
-}
-
-$assessment_id = (int)($_REQUEST['assessment_id'] ?? 0); 
-
+$assessment_id = (int)($_REQUEST['assessment_id'] ?? 0);
 if ($assessment_id === 0) {
-    header("Location: manage_exams.php?status=notfound&message=Exam ID not provided.");
+    header("Location: manage_exams.php?status=notfound");
     exit();
 }
 
-// --- Fetch Exam Details ---
-$sql_exam = "SELECT 
-                a.title, 
-                a.max_marks, 
-                a.assessment_date, 
-                cl.level_name, 
-                s.subject_name,
-                a.status as exam_status -- To check if exam is already graded
-            FROM assessments a
-            JOIN classes c ON a.class_id = c.id
-            JOIN class_levels cl ON c.class_level_id = cl.id
-            JOIN subjects s ON a.subject_id = s.id
-            WHERE a.id = '$assessment_id' AND a.assessment_type = 'Exam'";
+// --- Fetch Exam Details --- UPDATED
+$sql_exam = "SELECT a.*, cl.level_name, s.subject_name 
+             FROM assessments a
+             JOIN classes c ON a.class_id = c.id
+             JOIN class_levels cl ON c.class_level_id = cl.id
+             JOIN subjects s ON a.subject_id = s.id
+             WHERE a.id = '$assessment_id' AND a.assessment_type_id = 1"; // <-- වෙනස් කළ කොටස
 $result_exam = $db->query($sql_exam);
 
 if ($result_exam->num_rows === 0) {
-    header("Location: manage_exams.php?status=notfound&message=Exam not found or is not an Exam type.");
+    header("Location: manage_exams.php?status=notfound");
     exit();
 }
 $exam_details = $result_exam->fetch_assoc();
 
-// --- Fetch all Grades (A, B, C etc.) for dropdown and auto-grading logic ---
+// --- NEW: Authorization and Status Validations ---
+// 1. Allow access only if user is Admin or the assigned Teacher
+if ($user_role_name != 'admin') { // If not an admin
+    if ($user_role_name == 'teacher' && $exam_details['teacher_id'] != $logged_in_user_id) {
+        die("Access Denied: You are not authorized to enter results for this exam.");
+    }
+}
+// 2. Allow entering results only for 'Published' or already 'Graded' exams
+if (!in_array($exam_details['status'], ['Published', 'Graded'])) {
+    die("Action not allowed: Results can only be entered for exams that are 'Published' or 'Graded'. Current status is '{$exam_details['status']}'.");
+}
+
+// --- Fetch Grades for auto-grading logic ---
 $sql_grades = "SELECT id, grade_name, min_percentage, max_percentage FROM grades WHERE status='Active' ORDER BY min_percentage DESC";
 $all_grades_result = $db->query($sql_grades);
-$grades_map = []; // For easy lookup: Grade_ID => Grade_Name
-$grades_percentage_map = []; // For auto-grading: Min, Max percentage
+$grades_map = [];
+$grades_percentage_map = [];
 if ($all_grades_result) {
     while($grade = $all_grades_result->fetch_assoc()) {
         $grades_map[$grade['id']] = $grade['grade_name'];
@@ -71,82 +65,50 @@ if ($all_grades_result) {
     }
 }
 
-
 // --- Handle POST submission for entering results ---
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $db->begin_transaction();
-    try {
-        // Delete existing results for this assessment to avoid conflicts on re-submission
-        // This makes it easier to update results by just inserting new records
-        $sql_delete_existing_results = "DELETE FROM assessment_results WHERE assessment_id = '$assessment_id'";
-        $db->query($sql_delete_existing_results);
+    // This is a simple version without transactions
+    $sql_delete_existing_results = "DELETE FROM assessment_results WHERE assessment_id = '$assessment_id'";
+    $db->query($sql_delete_existing_results);
 
-        if (isset($_POST['results']) && is_array($_POST['results'])) {
-            foreach ($_POST['results'] as $student_user_id => $data) {
-                $marks_obtained = dataClean($data['marks_obtained']);
-                $remarks = dataClean($data['remarks']);
-                
-                // Only insert if marks are provided and are valid numbers
-                if (is_numeric($marks_obtained) && (float)$marks_obtained >= 0 && (float)$marks_obtained <= (float)$exam_details['max_marks']) {
-                    $marks_obtained = (float)$marks_obtained;
-                    $grade_id = 'NULL'; // Default to NULL if grade cannot be determined
-
-                    // Auto-determine Grade based on percentage
-                    // Ensure max_marks is not zero to avoid division by zero
-                    $percentage_obtained = ($exam_details['max_marks'] > 0) ? ($marks_obtained / (float)$exam_details['max_marks']) * 100 : 0;
-                    
-                    foreach ($grades_percentage_map as $g_id => $range) {
-                        if ($percentage_obtained >= (float)$range['min'] && $percentage_obtained <= (float)$range['max']) {
-                            $grade_id = $g_id; // Store the actual grade_id from the database
-                            break;
-                        }
+    if (isset($_POST['results']) && is_array($_POST['results'])) {
+        foreach ($_POST['results'] as $student_user_id => $data) {
+            $marks_obtained = dataClean($data['marks_obtained']);
+            $remarks = dataClean($data['remarks']);
+            
+            if (is_numeric($marks_obtained) && $marks_obtained >= 0 && $marks_obtained <= $exam_details['max_marks']) {
+                $grade_id = 'NULL';
+                $percentage = ($exam_details['max_marks'] > 0) ? ($marks_obtained / $exam_details['max_marks']) * 100 : 0;
+                foreach ($grades_percentage_map as $g_id => $range) {
+                    if ($percentage >= $range['min'] && $percentage <= $range['max']) {
+                        $grade_id = $g_id;
+                        break;
                     }
-
-                    $sql_insert_result = "INSERT INTO assessment_results (assessment_id, student_user_id, marks_obtained, grade_id, remarks, evaluated_by_teacher_id, evaluated_at)
-                                          VALUES ('$assessment_id', '$student_user_id', '$marks_obtained', " . ($grade_id === 'NULL' ? 'NULL' : "'$grade_id'") . ", '$remarks', '$logged_in_user_id', NOW())";
-                    $db->query($sql_insert_result);
                 }
+                $sql_insert_result = "INSERT INTO assessment_results (assessment_id, student_user_id, marks_obtained, grade_id, remarks, evaluated_by_teacher_id, evaluated_at)
+                                      VALUES ('$assessment_id', '$student_user_id', '$marks_obtained', " . ($grade_id === 'NULL' ? 'NULL' : "'$grade_id'") . ", '$remarks', '$logged_in_user_id', NOW())";
+                $db->query($sql_insert_result);
             }
         }
-
-        // Update assessment status to 'Graded' if not already
-        if ($exam_details['exam_status'] !== 'Graded') {
-            $sql_update_assessment_status = "UPDATE assessments SET status = 'Graded' WHERE id = '$assessment_id'";
-            $db->query($sql_update_assessment_status);
-        }
-
-        $db->commit();
-        header("Location: enter_results.php?assessment_id=$assessment_id&status=updated&message=Exam results entered successfully!");
-        exit();
-
-    } catch (Exception $e) {
-        $db->rollback();
-        $messages['main'] = "Database error: Could not enter results. " . $e->getMessage();
     }
+    // Update assessment status to 'Graded'
+    $sql_update_status = "UPDATE assessments SET status = 'Graded' WHERE id = '$assessment_id'";
+    $db->query($sql_update_status);
+
+    header("Location: enter_results.php?assessment_id=$assessment_id&status=updated");
+    exit();
 }
 
 // --- Fetch Students who were Present for the Exam ---
-// Also fetch their existing results if already entered
-$sql_students_for_results = "SELECT 
-                                u.Id as student_user_id, 
-                                u.FirstName, 
-                                u.LastName, 
-                                sd.registration_no,
-                                ea.attendance_status, -- Should be 'Present'
-                                ar.marks_obtained,    -- Existing marks
-                                ar.remarks,           -- Existing remarks
-                                ar.grade_id           -- Existing grade (Grade ID from grades table)
+$sql_students_for_results = "SELECT u.Id as student_user_id, u.FirstName, u.LastName, sd.registration_no, ar.marks_obtained, ar.remarks, ar.grade_id
                              FROM enrollments e
                              JOIN users u ON e.student_user_id = u.Id
                              JOIN student_details sd ON u.Id = sd.user_id
-                             LEFT JOIN exam_attendance ea ON u.Id = ea.student_user_id AND ea.assessment_id = '$assessment_id'
+                             JOIN exam_attendance ea ON u.Id = ea.student_user_id AND ea.assessment_id = '$assessment_id'
                              LEFT JOIN assessment_results ar ON u.Id = ar.student_user_id AND ar.assessment_id = '$assessment_id'
-                             WHERE e.class_id = (SELECT class_id FROM assessments WHERE id = '$assessment_id') 
-                             AND e.status = 'active' -- Only active enrollments
-                             AND ea.attendance_status = 'Present' -- Only students who were marked present
+                             WHERE e.class_id = '{$exam_details['class_id']}' AND e.status = 'active' AND ea.attendance_status = 'Present'
                              ORDER BY u.FirstName";
 $result_students_for_results = $db->query($sql_students_for_results);
-
 ?>
 
 <div class="container-fluid">

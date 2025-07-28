@@ -51,10 +51,11 @@ $sql_student_exam_results = "SELECT a.id as assessment_id, a.title, a.assessment
                              LEFT JOIN assessment_results ar ON a.id = ar.assessment_id AND ar.student_user_id = '$logged_in_student_id'
                              JOIN classes c ON a.class_id = c.id
                              LEFT JOIN grades gr ON ar.grade_id = gr.id
-                             WHERE a.assessment_type = 'Exam' AND a.status IN ('Published', 'Graded', 'Archived')
+                             WHERE a.assessment_type_id = 1 AND a.status IN ('Published', 'Graded', 'Archived')
                              AND c.id IN (SELECT class_id FROM enrollments WHERE student_user_id = '$logged_in_student_id' AND status = 'active')
                              ORDER BY a.assessment_date DESC";
 $result_student_exam_results = $db->query($sql_student_exam_results);
+
 
 // 5. Fetch Upcoming Exams
 $current_datetime = date('Y-m-d H:i:s');
@@ -63,43 +64,45 @@ $sql_upcoming_exams = "SELECT a.id as assessment_id, a.title, a.assessment_date,
                        JOIN classes c ON a.class_id = c.id
                        JOIN subjects s ON a.subject_id = s.id
                        JOIN class_levels cl ON c.class_level_id = cl.id
-                       WHERE a.assessment_type = 'Exam' AND a.status = 'Published'
+                       WHERE a.assessment_type_id = 1 AND a.status = 'Published'
                        AND CONCAT(a.assessment_date, ' ', a.end_time) > '$current_datetime'
                        AND c.id IN (SELECT class_id FROM enrollments WHERE student_user_id = '$logged_in_student_id' AND status = 'active')
                        ORDER BY a.assessment_date ASC";
 $result_upcoming_exams = $db->query($sql_upcoming_exams);
 
 // 6. Fetch Assignments
+// 6. Fetch Assignments - UPDATED
 $sql_student_assignments = "SELECT a.id as assignment_id, a.title, a.max_marks, a.due_date, ss.submission_status, ar.marks_obtained, gr.grade_name
-                            FROM assessments a
-                            JOIN classes c ON a.class_id = c.id
-                            LEFT JOIN student_submissions ss ON a.id = ss.assessment_id AND ss.student_user_id = '$logged_in_student_id'
-                            LEFT JOIN assessment_results ar ON a.id = ar.assessment_id AND ar.student_user_id = '$logged_in_student_id'
-                            LEFT JOIN grades gr ON ar.grade_id = gr.id
-                            WHERE a.assessment_type = 'Assignment' AND a.status IN ('Published', 'Graded')
-                            AND c.id IN (SELECT class_id FROM enrollments WHERE student_user_id = '$logged_in_student_id' AND status = 'active')
-                            ORDER BY a.due_date ASC";
+FROM assessments a
+JOIN classes c ON a.class_id = c.id
+LEFT JOIN student_submissions ss ON a.id = ss.assessment_id AND ss.student_user_id = '$logged_in_student_id'
+LEFT JOIN assessment_results ar ON a.id = ar.assessment_id AND ar.student_user_id = '$logged_in_student_id'
+LEFT JOIN grades gr ON ar.grade_id = gr.id
+WHERE a.assessment_type_id = 2 AND a.status IN ('Published', 'Graded')
+AND c.id IN (SELECT class_id FROM enrollments WHERE student_user_id = '$logged_in_student_id' AND status = 'active')
+ORDER BY a.due_date ASC";
 $result_student_assignments = $db->query($sql_student_assignments);
 
 // 7. Fetch Quizzes for the logged-in student with full class name
+// 7. Fetch Quizzes for the logged-in student with full class name - UPDATED
 $sql_student_quizzes = "
-    SELECT 
-        a.id as quiz_id,
-        a.title,
-        a.time_limit_minutes,
-        a.max_marks,
-        ar.marks_obtained,
-        CONCAT(cl.level_name, ' - ', s.subject_name, ' (', ct.type_name, ')') as class_full_name
-    FROM assessments a
-    JOIN classes c ON a.class_id = c.id
-    JOIN subjects s ON c.subject_id = s.id
-    JOIN class_levels cl ON c.class_level_id = cl.id
-    JOIN class_types ct ON c.class_type_id = ct.id
-    LEFT JOIN assessment_results ar ON a.id = ar.assessment_id AND ar.student_user_id = '$logged_in_student_id'
-    WHERE a.assessment_type = 'Quiz' 
-    AND a.status = 'Published'
-    AND c.id IN (SELECT class_id FROM enrollments WHERE student_user_id = '$logged_in_student_id' AND status = 'active')
-    ORDER BY a.created_at DESC
+SELECT 
+a.id as quiz_id,
+a.title,
+a.time_limit_minutes,
+a.max_marks,
+ar.marks_obtained,
+CONCAT(cl.level_name, ' - ', s.subject_name, ' (', ct.type_name, ')') as class_full_name
+FROM assessments a
+JOIN classes c ON a.class_id = c.id
+JOIN subjects s ON c.subject_id = s.id
+JOIN class_levels cl ON c.class_level_id = cl.id
+JOIN class_types ct ON c.class_type_id = ct.id
+LEFT JOIN assessment_results ar ON a.id = ar.assessment_id AND ar.student_user_id = '$logged_in_student_id'
+WHERE a.assessment_type_id = 3 
+AND a.status = 'Published'
+AND c.id IN (SELECT class_id FROM enrollments WHERE student_user_id = '$logged_in_student_id' AND status = 'active')
+ORDER BY a.created_at DESC
 ";
 $result_student_quizzes = $db->query($sql_student_quizzes);
 
@@ -355,6 +358,11 @@ $result_invoices = $db->query($sql_invoices);
         color: var(--bs-primary);
         background-color: var(--bs-primary-bg-subtle);
     }
+
+    .badge-graded {
+        background-color: #1a6289;
+        color: #ffffff;
+    }
     </style>
 </head>
 
@@ -486,7 +494,7 @@ $result_invoices = $db->query($sql_invoices);
             </div>
 
             <div class="row">
-                <div class="col-12">
+                <div class="col-6">
                     <div class="dashboard-card">
                         <div class="card-title-icon">
                             <span class="icon"><i class="fas fa-book-open"></i></span>
@@ -530,6 +538,51 @@ $result_invoices = $db->query($sql_invoices);
                         <?php else: ?>
                         <p class="text-center text-muted">No class materials have been uploaded for your enrolled
                             classes yet.</p>
+                        <?php endif; ?>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="dashboard-card">
+                        <div class="card-title-icon"><span class="icon"><i class="fas fa-poll-h"></i></span>
+                            <h3>My Exam Results</h3>
+                        </div>
+                        <?php if ($result_student_exam_results && $result_student_exam_results->num_rows > 0): ?>
+                        <div class="table-responsive">
+                            <table class="table table-sm">
+                                <thead>
+                                    <tr>
+                                        <th>Exam</th>
+                                        <th>Date</th>
+                                        <th>Marks</th>
+                                        <th>Grade</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php while ($exam_result = $result_student_exam_results->fetch_assoc()): ?>
+                                    <tr>
+                                        <td><?= htmlspecialchars($exam_result['title']) ?></td>
+                                        <td><?= htmlspecialchars(date('Y-m-d', strtotime($exam_result['assessment_date']))) ?>
+                                        </td>
+                                        <td>
+                                            <?php if (!is_null($exam_result['marks_obtained'])): ?>
+                                            <strong><?= htmlspecialchars(number_format($exam_result['marks_obtained'], 2)) ?>
+                                                /
+                                                <?= htmlspecialchars(number_format($exam_result['max_marks'], 2)) ?></strong>
+                                            <?php else: ?><span
+                                                class="badge badge-pending">Pending</span><?php endif; ?>
+                                        </td>
+                                        <td>
+                                            <?php if (!is_null($exam_result['grade_name'])): ?>
+                                            <span
+                                                class="badge badge-graded"><?= htmlspecialchars($exam_result['grade_name']) ?></span>
+                                            <?php else: ?><span class="badge badge-na">N/A</span><?php endif; ?>
+                                        </td>
+                                    </tr>
+                                    <?php endwhile; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                        <?php else: ?><p class="text-center text-muted">No exam results available for you yet.</p>
                         <?php endif; ?>
                     </div>
                 </div>

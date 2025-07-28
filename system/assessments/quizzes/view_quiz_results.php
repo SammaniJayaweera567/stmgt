@@ -20,16 +20,16 @@ if ($quiz_id === 0) {
 }
 
 // --- Fetch Quiz Details ---
-$sql_quiz = "SELECT title, max_marks, pass_mark_percentage FROM assessments WHERE id = '$quiz_id' AND assessment_type = 'Quiz'";
+$sql_quiz = "SELECT title, max_marks, pass_mark_percentage FROM assessments WHERE id = '$quiz_id' AND assessment_type_id = 3"; // Changed to assessment_type_id = 3 (for Quiz)
 $result_quiz = $db->query($sql_quiz);
 if ($result_quiz->num_rows === 0) {
-    header("Location: manage_quizzes.php?status=notfound");
+    header("Location: manage_quizzes.php?status=notfound&message=Quiz not found or is not a Quiz type.");
     exit();
 }
-$quiz_data = $result_quiz->fetch_assoc();
-$quiz_title = $quiz_data['title'];
-$max_marks = $quiz_data['max_marks'];
-$pass_mark_percentage = $quiz_data['pass_mark_percentage'];
+$quiz_data = $result_quiz->fetch_assoc(); // Fetch quiz data
+$quiz_title = $quiz_data['title']; // Quiz title
+$max_marks_quiz = $quiz_data['max_marks']; // Use a distinct variable name for quiz's max marks
+$pass_mark_percentage = $quiz_data['pass_mark_percentage']; // Pass mark percentage
 
 // --- Fetch Student Results for this Quiz ---
 // UPDATED: Joined student_submissions table to get the submission ID for the "View Answers" link
@@ -48,7 +48,7 @@ $sql_results = "SELECT
                 WHERE ar.assessment_id = '$quiz_id'
                 ORDER BY ar.marks_obtained DESC, u.FirstName ASC";
 
-$result_students = $db->query($sql_results);
+$result_students = $db->query($sql_results); // Fetch student results
 ?>
 
 <div class="container-fluid">
@@ -63,8 +63,10 @@ $result_students = $db->query($sql_results);
         <div class="card-header d-flex justify-content-between align-items-center">
             <h3 class="card-title">Student Performance</h3>
             <div>
-                <span class="badge bg-info">Total Marks: <?= htmlspecialchars(number_format($max_marks, 2)) ?></span>
-                <span class="badge bg-warning text-dark">Pass Mark: <?= htmlspecialchars($pass_mark_percentage) ?>%</span>
+                <span class="badge bg-info">Total Marks:
+                    <?= htmlspecialchars(number_format($max_marks_quiz, 2)) ?></span>
+                <span class="badge bg-warning text-dark">Pass Mark:
+                    <?= htmlspecialchars($pass_mark_percentage) ?>%</span>
             </div>
         </div>
         <div class="card-body">
@@ -79,7 +81,7 @@ $result_students = $db->query($sql_results);
                             <th>Percentage (%)</th>
                             <th>Grade</th>
                             <th>Status</th>
-                            <th>Actions</th> <!-- NEW: Added Actions column -->
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -87,43 +89,40 @@ $result_students = $db->query($sql_results);
                         if ($result_students && $result_students->num_rows > 0) {
                             $rank = 1;
                             while ($row = $result_students->fetch_assoc()) {
-                                $percentage = ($max_marks > 0) ? ($row['marks_obtained'] / $max_marks) * 100 : 0;
-                                $status = ($percentage >= $pass_mark_percentage) ? 'Pass' : 'Fail';
+                                // Use $max_marks_quiz for percentage calculation
+                                $percentage = ($max_marks_quiz > 0) ? ($row['marks_obtained'] / $max_marks_quiz) * 100 : 0;
+                                $status_text_pass_fail = ($percentage >= $pass_mark_percentage) ? 'Pass' : 'Fail';
+                                $status_class_pass_fail = ($percentage >= $pass_mark_percentage) ? 'bg-success' : 'bg-danger';
                         ?>
-                                <tr>
-                                    <td><?= $rank++ ?></td>
-                                    <td><?= htmlspecialchars($row['registration_no']) ?></td>
-                                    <td><?= htmlspecialchars($row['FirstName'] . ' ' . $row['LastName']) ?></td>
-                                    <td><?= htmlspecialchars(number_format($row['marks_obtained'], 2)) ?> / <?= htmlspecialchars(number_format($max_marks, 2)) ?></td>
-                                    <td><?= htmlspecialchars(number_format($percentage, 2)) ?>%</td>
-                                    <td>
-                                        <span class="badge bg-primary"><?= htmlspecialchars($row['grade_name'] ?? 'N/A') ?></span>
-                                    </td>
-                                    <td>
-                                        <?php if ($status == 'Pass'): ?>
-                                            <span class="badge bg-success">Pass</span>
-                                        <?php else: ?>
-                                            <span class="badge bg-danger">Fail</span>
-                                        <?php endif; ?>
-                                    </td>
-                                    <!-- NEW: Cell for the action button -->
-                                    <td>
-                                        <?php if (!empty($row['submission_id'])): ?>
-                                            <a href="view_student_answers.php?submission_id=<?= $row['submission_id'] ?>" class="btn btn-info btn-sm" title="View Answers">
-                                                <i class="fas fa-eye"></i>
-                                            </a>
-                                        <?php endif; ?>
-                                    </td>
-                                </tr>
+                        <tr>
+                            <td><?= $rank++ ?></td>
+                            <td><?= htmlspecialchars($row['registration_no']) ?></td>
+                            <td><?= htmlspecialchars($row['FirstName'] . ' ' . $row['LastName']) ?></td>
+                            <td><?= htmlspecialchars(number_format($row['marks_obtained'], 2)) ?> /
+                                <?= htmlspecialchars(number_format($max_marks_quiz, 2)) ?></td>
+                            <td>
+                                <span class="badge bg-info"><?= htmlspecialchars($row['grade_name'] ?? 'N/A') ?></span>
+                            </td>
+                            <td>
+                                <span class="badge <?= $status_class_pass_fail ?>"><?= $status_text_pass_fail ?></span>
+                            </td>
+                            <td>
+                                <?php if (!empty($row['submission_id'])): ?>
+                                <a href="view_student_answers.php?submission_id=<?= $row['submission_id'] ?>"
+                                    class="btn btn-info btn-sm" title="View Answers">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
                         <?php
                             }
                         } else {
-                            // UPDATED: Colspan changed from 7 to 8
+                            // Colspan changed from 7 to 8 (already correct in your provided code)
                             echo '<tr><td colspan="8" class="text-center">No results found for this quiz yet.</td></tr>';
                         }
                         ?>
                     </tbody>
-                </table>
             </div>
         </div>
         <div class="card-footer">
@@ -131,15 +130,18 @@ $result_students = $db->query($sql_results);
                 <i class="fas fa-arrow-left"></i> Back to All Quizzes
             </a>
         </div>
+
     </div>
 </div>
 
 <script>
-    $(document).ready(function() { 
-        $('#resultsTable').DataTable({
-            "order": [[ 0, "asc" ]] // Order by the first column (Rank)
-        }); 
+$(document).ready(function() {
+    $('#resultsTable').DataTable({
+        "order": [
+            [0, "asc"]
+        ] // Order by the first column (Rank)
     });
+});
 </script>
 
 <?php

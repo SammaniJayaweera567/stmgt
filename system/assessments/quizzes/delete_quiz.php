@@ -14,7 +14,7 @@ if (!hasPermission($_SESSION['user_id'], 'delete_quizz')) {
 $db = dbConn();
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id'])) {
-    $id = (int)($_POST['id']);
+    $id = (int)($_POST['id']); // Get ID from POST
 
     // A quiz can have questions, submissions, and results.
     // It's crucial to handle these related records before deleting the main quiz record.
@@ -37,14 +37,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id'])) {
         }
         
         // 3. Delete associated submissions from 'student_submissions'
-        // (This table might contain records of students starting the quiz)
         $sql_delete_submissions = "DELETE FROM student_submissions WHERE assessment_id = '$id'";
         if (!$db->query($sql_delete_submissions)) {
             throw new Exception("Failed to delete student submissions for the quiz: " . $db->error);
         }
 
         // 4. Finally, delete the quiz itself from the 'assessments' table
-        $sql_delete_quiz = "DELETE FROM assessments WHERE id = '$id' AND assessment_type = 'Quiz'";
+        // UPDATED: Use assessment_type_id for filtering
+        $sql_delete_quiz = "DELETE FROM assessments WHERE id = '$id' AND assessment_type_id = 3"; // Changed to assessment_type_id = 3 (for Quiz)
         if (!$db->query($sql_delete_quiz)) {
             throw new Exception("Failed to delete the main quiz record: " . $db->error);
         }
@@ -68,5 +68,5 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id'])) {
     exit();
 }
 
-ob_end_flush();
+ob_end_flush(); // Output buffering end
 ?>

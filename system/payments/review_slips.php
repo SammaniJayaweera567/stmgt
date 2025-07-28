@@ -23,38 +23,29 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
     if ($slip_id > 0 && $invoice_id > 0) {
         // --- APPROVE ACTION ---
         if ($_POST['action'] == 'approve') {
-            $db->begin_transaction();
-            try {
-                // 1. Update payment_slips table
-                $sql_update_slip = "UPDATE payment_slips SET status = 'Approved', reviewed_by_user_id = '$reviewed_by', reviewed_at = NOW() WHERE id = '$slip_id'";
-                if (!$db->query($sql_update_slip)) throw new Exception($db->error);
-
-                // 2. Update invoices table
+            // 1. Update payment_slips table
+            $sql_update_slip = "UPDATE payment_slips SET status = 'Approved', reviewed_by_user_id = '$reviewed_by', reviewed_at = NOW() WHERE id = '$slip_id'";
+            if ($db->query($sql_update_slip)) {
+                // 2. If slip update is successful, update invoices table
                 $sql_update_invoice = "UPDATE invoices SET status = 'Paid' WHERE id = '$invoice_id'";
-                if (!$db->query($sql_update_invoice)) throw new Exception($db->error);
-
-                // 3. Create a record in the payments table
-                $sql_invoice_amount = "SELECT payable_amount FROM invoices WHERE id = '$invoice_id'";
-                $amount_result = $db->query($sql_invoice_amount);
-                $paid_amount = $amount_result->fetch_assoc()['payable_amount'];
-
-                $sql_insert_payment = "INSERT INTO payments (invoice_id, paid_amount, payment_method, transaction_date, recorded_by)
-                                       VALUES ('$invoice_id', '$paid_amount', 'Bank Transfer', NOW(), '$reviewed_by')";
-                if (!$db->query($sql_insert_payment)) throw new Exception($db->error);
-                
-                $db->commit();
-                $_SESSION['status_message'] = "Payment slip approved and payment recorded successfully!";
-
-            } catch (Exception $e) {
-                $db->rollback();
-                $_SESSION['status_message'] = "Transaction failed: " . $e->getMessage();
+                if ($db->query($sql_update_invoice)) {
+                    // 3. If invoice update is successful, create a record in payments
+                    $sql_invoice_amount = "SELECT payable_amount FROM invoices WHERE id = '$invoice_id'";
+                    $paid_amount = $db->query($sql_invoice_amount)->fetch_assoc()['payable_amount'];
+                    $sql_insert_payment = "INSERT INTO payments (invoice_id, paid_amount, payment_method, transaction_date, recorded_by) VALUES ('$invoice_id', '$paid_amount', 'Bank Transfer', NOW(), '$reviewed_by')";
+                    $db->query($sql_insert_payment);
+                    $_SESSION['status_message'] = "Payment slip approved successfully!";
+                } else {
+                    $_SESSION['status_message'] = "Error: Could not update invoice status.";
+                }
+            } else {
+                $_SESSION['status_message'] = "Error: Could not approve the slip.";
             }
         }
         // --- REJECT ACTION ---
         elseif ($_POST['action'] == 'reject') {
             $rejection_reason = dataClean($_POST['rejection_reason'] ?? 'No reason provided.');
             $sql_reject_slip = "UPDATE payment_slips SET status = 'Rejected', rejection_reason = '$rejection_reason', reviewed_by_user_id = '$reviewed_by', reviewed_at = NOW() WHERE id = '$slip_id'";
-            
             if ($db->query($sql_reject_slip)) {
                 $_SESSION['status_message'] = "Payment slip has been rejected.";
             } else {
@@ -67,30 +58,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
 }
 
 // --- Fetch Slips to Display ---
-$filter_status = $_GET['status'] ?? 'Pending'; // Default to show pending slips
-
-$sql_slips = "SELECT 
-                ps.id as slip_id,
-                ps.invoice_id,
-                ps.file_path,
-                ps.uploaded_at,
-                ps.rejection_reason,
-                CONCAT(u_student.FirstName, ' ', u_student.LastName) as student_name,
-                CONCAT(u_parent.FirstName, ' ', u_parent.LastName) as parent_name,
-                CONCAT(cl.level_name, ' - ', s.subject_name) as class_name,
-                i.payable_amount,
-                i.invoice_month,
-                i.invoice_year
-            FROM payment_slips ps
-            JOIN invoices i ON ps.invoice_id = i.id
-            JOIN users u_student ON i.student_user_id = u_student.Id
-            JOIN users u_parent ON ps.uploaded_by_parent_id = u_parent.Id
-            JOIN classes c ON i.class_id = c.id
-            JOIN class_levels cl ON c.class_level_id = cl.id
-            JOIN subjects s ON c.subject_id = s.id
-            WHERE ps.status = '$filter_status'
-            ORDER BY ps.uploaded_at ASC";
-
+// --- Fetch Slips to Display ---
+$filter_status = $_GET['status'] ?? 'Pending';
+$sql_slips = "SELECT ps.id as slip_id, ps.invoice_id, ps.file_path, ps.uploaded_at, ps.rejection_reason, CONCAT(u_student.FirstName, ' ', u_student.LastName) as student_name, CONCAT(u_parent.FirstName, ' ', u_parent.LastName) as parent_name, CONCAT(cl.level_name, ' - ', s.subject_name) as class_name, i.payable_amount, i.invoice_month, i.invoice_year FROM payment_slips ps JOIN invoices i ON ps.invoice_id = i.id JOIN users u_student ON i.student_user_id = u_student.Id JOIN users u_parent ON ps.uploaded_by_parent_id = u_parent.Id JOIN classes c ON i.class_id = c.id JOIN class_levels cl ON c.class_level_id = cl.id JOIN subjects s ON c.subject_id = s.id WHERE ps.status = '$filter_status' ORDER BY ps.uploaded_at ASC";
 $result_slips = $db->query($sql_slips);
 ?>
 

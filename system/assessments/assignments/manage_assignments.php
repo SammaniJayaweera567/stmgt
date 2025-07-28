@@ -70,7 +70,7 @@ $db = dbConn();
                                         JOIN subjects s ON c.subject_id = s.id
                                         JOIN class_types ct ON c.class_type_id = ct.id
                                         LEFT JOIN users u ON a.teacher_id = u.Id
-                                        WHERE a.assessment_type = 'Assignment'
+                                        WHERE a.assessment_type_id = 2
                                         ORDER BY a.due_date DESC";
                                 $result = $db->query($sql);
 

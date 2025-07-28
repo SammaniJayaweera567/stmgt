@@ -15,7 +15,7 @@ $db = dbConn();
 ?>
 
 <div class="container-fluid">
-    <?php show_status_message(); // Call the common function to show toast notifications ?>
+    <?php show_status_message(); ?>
 
     <div class="row mb-4">
         <div class="d-flex content-header-text">
@@ -69,7 +69,7 @@ $db = dbConn();
                                         <div class="btn-group">
                                             <?php if (hasPermission($_SESSION['user_id'], 'edit_assement_grade')) { ?>
                                             <a href="edit_grade.php?id=<?= $row['id'] ?>"
-                                                class="btn btn-primary btn-sm mr-1" title="Edit Grade">
+                                                class="btn btn-primary btn-sm me-1 mr-1" title="Edit Grade">
                                                 <i class="fas fa-edit"></i>
                                             </a>
                                             <?php } ?>
@@ -77,7 +77,7 @@ $db = dbConn();
                                             <form action="delete_grade.php" method="post" style="display:inline-block;"
                                                 id="deleteForm<?= $row['id'] ?>">
                                                 <input type="hidden" name="id" value="<?= $row['id'] ?>">
-                                                <button type="button" onclick="confirmDelete(<?= $row['id'] ?>)"
+                                                <button type="button" onclick="confirmDeleteSweet(<?= $row['id'] ?>)"
                                                     class="btn btn-danger btn-sm" title="Delete Grade">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
@@ -103,12 +103,30 @@ $db = dbConn();
 
 <script>
 $(document).ready(function() {
-    // initializeDataTable and confirmDelete functions are expected to be in custom_scripts.js
-    initializeDataTable('gradesTable');
+    $('#gradesTable').DataTable({
+        "order": [[ 1, "desc" ]] // Order by Min Percentage descending by default
+    });
 });
+
+// UPDATED: SweetAlert confirmation function
+function confirmDeleteSweet(id) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById('deleteForm' + id).submit();
+        }
+    })
+}
 </script>
 
 <?php
 $content = ob_get_clean();
-include '../layouts.php'; // Correct path to layouts.php
+include '../layouts.php';
 ?>

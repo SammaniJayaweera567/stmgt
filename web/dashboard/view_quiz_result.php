@@ -32,7 +32,7 @@ $sql_result = "SELECT
                 LEFT JOIN grades gr ON ar.grade_id = gr.id
                 WHERE ar.assessment_id = '$quiz_id' 
                 AND ar.student_user_id = '$logged_in_student_id'
-                AND a.assessment_type = 'Quiz'";
+                AND a.assessment_type_id = 3";
 
 $result_data = $db->query($sql_result);
 

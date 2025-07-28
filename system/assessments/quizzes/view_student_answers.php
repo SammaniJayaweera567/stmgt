@@ -30,12 +30,13 @@ $sql_submission = "SELECT
                    JOIN assessments a ON ss.assessment_id = a.id
                    JOIN users u ON ss.student_user_id = u.Id
                    LEFT JOIN assessment_results ar ON ss.assessment_id = ar.assessment_id AND ss.student_user_id = ar.student_user_id
-                   WHERE ss.id = '$submission_id'";
+                   WHERE ss.id = '$submission_id' AND a.assessment_type_id = 3"; // Changed to assessment_type_id = 3 (for Quiz)
+
 $result_submission = $db->query($sql_submission);
 if ($result_submission->num_rows === 0) {
-    die("Submission not found.");
+    die("Submission not found or is not a quiz submission."); // More specific message
 }
-$submission_data = $result_submission->fetch_assoc();
+$submission_data = $result_submission->fetch_assoc(); // Fetch submission data
 
 // FIX: Check if submission_content is not empty before decoding to prevent deprecated warning.
 $student_answers = !empty($submission_data['submission_content']) ? json_decode($submission_data['submission_content'], true) : [];

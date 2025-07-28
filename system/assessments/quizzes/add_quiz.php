@@ -22,6 +22,7 @@ $subject_id = '';
 $teacher_id = '';
 $time_limit_minutes = '';
 $pass_mark_percentage = '';
+$due_date = '';
 $status = 'Draft'; // Default status
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -34,28 +35,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $teacher_id = dataClean($teacher_id ?? '');
     $time_limit_minutes = dataClean($time_limit_minutes ?? '');
     $pass_mark_percentage = dataClean($pass_mark_percentage ?? '');
+    $due_date = dataClean($due_date ?? '');
     $status = dataClean($status ?? '');
     
     // Server-side Validation
     if (empty($title)) { $messages['main'] = "Quiz Title is required."; }
     if (empty($class_id)) { $messages['main'] = "Class is required."; }
+    if (empty($academic_year_id)) { $messages['main'] = "Academic Year is required."; } // Added validation
     if (empty($subject_id)) { $messages['main'] = "Subject is required."; }
+    if (empty($teacher_id)) { $messages['main'] = "Teacher is required."; } // Added validation
     if (empty($time_limit_minutes) || !is_numeric($time_limit_minutes) || $time_limit_minutes <= 0) { $messages['main'] = "Time Limit must be a positive number."; }
     if (!is_numeric($pass_mark_percentage) || $pass_mark_percentage < 0 || $pass_mark_percentage > 100) { $messages['main'] = "Pass Mark Percentage must be between 0 and 100."; }
+    if (empty($due_date)) { $messages['main'] = "Due Date is required."; }
     if (empty($status)) { $messages['main'] = "Status is required."; }
 
     if (empty($messages)) {
         // All validations pass, insert into database
-        // =================================================================================
-        // FIX: Added 'max_marks' with a default value of 0 to the INSERT statement.
-        // =================================================================================
-        $sql = "INSERT INTO assessments (title, assessment_type, class_id, academic_year_id, subject_id, teacher_id, time_limit_minutes, pass_mark_percentage, status, max_marks) 
-                VALUES ('$title', 'Quiz', '$class_id', '$academic_year_id', '$subject_id', '$teacher_id', '$time_limit_minutes', '$pass_mark_percentage', '$status', 0)";
+        // UPDATED: Changed assessment_type to assessment_type_id = 3 for Quiz
+        // max_marks is intentionally 0 initially, as questions and their marks will be added later.
+        $sql = "INSERT INTO assessments (title, assessment_type_id, class_id, academic_year_id, subject_id, teacher_id, time_limit_minutes, pass_mark_percentage, status, max_marks, due_date) 
+            VALUES ('$title', 3, '$class_id', '$academic_year_id', '$subject_id', '$teacher_id', '$time_limit_minutes', '$pass_mark_percentage', '$status', 0, " . ($formatted_due_date ? "'$formatted_due_date'" : "NULL") . ")";
         
-        if ($db->query($sql)) {
+         if ($db->query($sql)) { // This is line 50 in your file (or near it after additions)
             $new_quiz_id = $db->insert_id;
             header("Location: manage_questions.php?quiz_id=$new_quiz_id&status=quiz_added");
-            exit();
+        exit();
         } else {
             $messages['main'] = "Database error: Could not create the quiz. " . $db->error;
         }
@@ -63,31 +67,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 }
 
 // Fetch data for dropdowns
-$academic_years = $db->query("SELECT * FROM academic_years WHERE status='Active'");
-$classes = $db->query("SELECT c.id, cl.level_name, s.subject_name, ct.type_name FROM classes c JOIN class_levels cl ON c.class_level_id = cl.id JOIN subjects s ON c.subject_id = s.id JOIN class_types ct ON c.class_type_id = ct.id WHERE c.status='Active' ORDER BY cl.level_name, s.subject_name");
-$subjects = $db->query("SELECT * FROM subjects WHERE status='Active'");
-$teachers = $db->query("SELECT u.Id, u.FirstName, u.LastName FROM users u JOIN user_roles ur ON u.user_role_id=ur.Id WHERE ur.RoleName='Teacher' AND u.Status='Active'");
+$academic_years = $db->query("SELECT * FROM academic_years WHERE status='Active' ORDER BY year_name DESC"); // Added ordering
+$classes = $db->query("SELECT c.id, cl.level_name, s.subject_name, ct.type_name FROM classes c JOIN class_levels cl ON c.class_level_id = cl.id JOIN subjects s ON c.subject_id = s.id JOIN class_types ct ON c.class_type_id = ct.id WHERE c.status='Active' ORDER BY cl.level_name, s.subject_name"); // Added ordering
+$subjects = $db->query("SELECT * FROM subjects WHERE status='Active' ORDER BY subject_name"); // Added ordering
+$teachers = $db->query("SELECT u.Id, u.FirstName, u.LastName FROM users u JOIN user_roles ur ON u.user_role_id=ur.Id WHERE ur.RoleName='Teacher' AND u.Status='Active' ORDER BY u.FirstName, u.LastName"); // Added join to user_roles and ordering
 ?>
 
 <div class="container-fluid">
     <div class="card card-primary">
-        <div class="card-header"><h3 class="card-title">Create New Quiz</h3></div>
+        <div class="card-header">
+            <h3 class="card-title">Create New Quiz</h3>
+        </div>
         <form method="POST" action="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>">
             <div class="card-body">
                 <?php if(!empty($messages['main'])): ?>
-                    <div class="alert alert-danger"><?= htmlspecialchars($messages['main']) ?></div>
+                <div class="alert alert-danger"><?= htmlspecialchars($messages['main']) ?></div>
                 <?php endif; ?>
 
                 <div class="row">
                     <div class="form-group col-md-6">
                         <label>Title <span class="text-danger">*</span></label>
-                        <input type="text" name="title" class="form-control" value="<?= htmlspecialchars(@$title) ?>" required>
+                        <input type="text" name="title" class="form-control" value="<?= htmlspecialchars(@$title) ?>"
+                            required>
                     </div>
                     <div class="form-group col-md-6">
                         <label>Class <span class="text-danger">*</span></label>
                         <select name="class_id" class="form-control" required>
-                            <option value="">-- Select Class --</option>
-                            <?php while($row = $classes->fetch_assoc()) { 
+                            <option value="">Select Class</option>
+                            <?php mysqli_data_seek($classes, 0); while($row = $classes->fetch_assoc()) { 
                                 $class_full_name = htmlspecialchars($row['level_name'] . ' - ' . $row['subject_name'] . ' (' . $row['type_name'] . ')');
                                 $selected = (@$class_id == $row['id']) ? 'selected' : '';
                                 echo "<option value='{$row['id']}' $selected>{$class_full_name}</option>";
@@ -98,9 +105,9 @@ $teachers = $db->query("SELECT u.Id, u.FirstName, u.LastName FROM users u JOIN u
 
                 <div class="row">
                     <div class="form-group col-md-4">
-                        <label>Academic Year</label>
-                        <select name="academic_year_id" class="form-control">
-                            <option value="">-- Select Academic Year --</option>
+                        <label>Academic Year <span class="text-danger">*</span></label>
+                        <select name="academic_year_id" class="form-control" required>
+                            <option value="">Select Academic Year</option>
                             <?php mysqli_data_seek($academic_years, 0); while($row = $academic_years->fetch_assoc()) { 
                                 $selected = (@$academic_year_id == $row['id']) ? 'selected' : '';
                                 echo "<option value='{$row['id']}' $selected>".htmlspecialchars($row['year_name'])."</option>";
@@ -110,18 +117,18 @@ $teachers = $db->query("SELECT u.Id, u.FirstName, u.LastName FROM users u JOIN u
                     <div class="form-group col-md-4">
                         <label>Subject <span class="text-danger">*</span></label>
                         <select name="subject_id" class="form-control" required>
-                            <option value="">-- Select Subject --</option>
-                            <?php while($row = $subjects->fetch_assoc()) { 
+                            <option value="">Select Subject</option>
+                            <?php mysqli_data_seek($subjects, 0); while($row = $subjects->fetch_assoc()) { 
                                 $selected = (@$subject_id == $row['id']) ? 'selected' : '';
                                 echo "<option value='{$row['id']}' $selected>".htmlspecialchars($row['subject_name'])."</option>";
                             } ?>
                         </select>
                     </div>
                     <div class="form-group col-md-4">
-                        <label>Teacher</label>
-                        <select name="teacher_id" class="form-control">
-                            <option value="">-- Select Teacher --</option>
-                            <?php while($row = $teachers->fetch_assoc()) { 
+                        <label>Teacher <span class="text-danger">*</span></label>
+                        <select name="teacher_id" class="form-control" required>
+                            <option value="">Select Teacher</option>
+                            <?php mysqli_data_seek($teachers, 0); while($row = $teachers->fetch_assoc()) { 
                                 $selected = (@$teacher_id == $row['Id']) ? 'selected' : '';
                                 echo "<option value='{$row['Id']}' $selected>".htmlspecialchars($row['FirstName'].' '.$row['LastName'])."</option>";
                             } ?>
@@ -132,20 +139,31 @@ $teachers = $db->query("SELECT u.Id, u.FirstName, u.LastName FROM users u JOIN u
                 <div class="row">
                     <div class="form-group col-md-6">
                         <label>Time Limit (Minutes) <span class="text-danger">*</span></label>
-                        <input type="number" name="time_limit_minutes" class="form-control" value="<?= htmlspecialchars(@$time_limit_minutes) ?>" required min="1">
+                        <input type="number" name="time_limit_minutes" class="form-control"
+                            value="<?= htmlspecialchars(@$time_limit_minutes) ?>" required min="1">
                     </div>
                     <div class="form-group col-md-6">
                         <label>Pass Mark Percentage (%)</label>
-                        <input type="number" step="0.01" name="pass_mark_percentage" class="form-control" value="<?= htmlspecialchars(@$pass_mark_percentage) ?>" min="0" max="100">
+                        <input type="number" step="0.01" name="pass_mark_percentage" class="form-control"
+                            value="<?= htmlspecialchars(@$pass_mark_percentage) ?>" min="0" max="100">
                     </div>
                 </div>
-                
-                <div class="form-group">
-                    <label>Status <span class="text-danger">*</span></label>
-                    <select name="status" class="form-control" required>
-                        <option value="Draft" <?= (@$status == 'Draft') ? 'selected' : '' ?>>Draft</option>
-                        <option value="Published" <?= (@$status == 'Published') ? 'selected' : '' ?>>Published</option>
-                    </select>
+
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label>Due Date <span class="text-danger">*</span></label>
+                        <input type="datetime-local" name="due_date" class="form-control"
+                            value="<?= htmlspecialchars(@$due_date) ?>" required>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label>Status <span class="text-danger">*</span></label>
+                        <select name="status" class="form-control" required>
+                            <option value="Draft" <?= (@$status == 'Draft') ? 'selected' : '' ?>>Draft</option>
+                            <option value="Published" <?= (@$status == 'Published') ? 'selected' : '' ?>>Published
+                            </option>
+                        </select>
+                    </div>
                 </div>
             </div>
             <div class="card-footer">
