@@ -9,7 +9,7 @@ function dataClean($input = null)
 
 function dbConn()
 {
-    $conn = new mysqli("localhost", "dev1", "123456", "stmgt", 3307);
+    $conn = new mysqli("localhost", "root", "12345", "stmgt", 3306);
     if ($conn->connect_error) {
         die("Connection failed:" . $conn->connect_error);
     } else {
