@@ -1,7 +1,16 @@
 <?php
 ob_start();
 include '../../init.php';
+if (!hasPermission($_SESSION['user_id'], 'edit_teacher')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
 
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
+
+    header("Location: $backUrl");
+    exit;
+}
 // --- Validation Functions (Same as add.php) ---
 function isValidNIC($nic) {
     $len = strlen($nic);

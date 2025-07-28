@@ -1,10 +1,18 @@
 <?php
 ob_start();
 include '../../../init.php'; // Correct path from /system/assessments/assignments/
+if (!hasPermission($_SESSION['user_id'], 'edit_assignment')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
 
-$db = dbConn(); // Database connection
-$messages = []; // For displaying user messages
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
 
+    header("Location: $backUrl");
+    exit;
+}
+$db = dbConn();
+$messages = [];
 $id = (int)($_REQUEST['id'] ?? 0); // Get assignment ID from GET or POST
 
 if ($id === 0) {

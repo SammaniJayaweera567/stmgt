@@ -1,7 +1,20 @@
 <?php
 ob_start();
+<<<<<<< HEAD
 include '../../init.php';
+=======
+include '../../init.php'; // ඔබගේ init.php ගොනුවට නිවැරදි path එක දෙන්න
+if (!hasPermission($_SESSION['user_id'], 'manage_student_enrollment')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
+>>>>>>> origin/geek
 
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
+
+    header("Location: $backUrl");
+    exit;
+}
 show_status_message(); 
 ?>
 <div class="container-fluid">
@@ -44,20 +57,50 @@ show_status_message();
                                 <td><?= display_status_badge($row['enrollment_status']) ?></td>
                                 <td>
                                     <div class="btn-group">
-                                        <form action="process_enrollment_status.php" method="post" class="me-2 mr-1">
-                                            <input type="hidden" name="enrollment_id" value="<?= $row['enrollment_id'] ?>">
-                                            <select name="new_status" class="form-select-sm form-control" onchange="this.form.submit()">
-                                                <option value="active" <?= $row['enrollment_status'] == 'active' ? 'selected' : '' ?>>Active</option>
-                                                <option value="pending" <?= $row['enrollment_status'] == 'pending' ? 'selected' : '' ?>>Pending</option>
-                                                <option value="completed" <?= $row['enrollment_status'] == 'completed' ? 'selected' : '' ?>>Completed</option>
-                                                <option value="cancelled" <?= $row['enrollment_status'] == 'cancelled' ? 'selected' : '' ?>>Cancelled</option>
+                                        <?php if (hasPermission($_SESSION['user_id'], 'show_student_enrollment')) { ?>
+                                        <form action="view.php" method="post" style="display:inline-block;"
+                                            class="mr-1">
+                                            <input type="hidden" name="enrollment_id"
+                                                value="<?= $row['enrollment_id'] ?>">
+                                            <button type="submit" class="btn btn-info btn-sm" title="View Details"><i
+                                                    class="fas fa-eye"></i></button>
+                                        </form>
+                                        <?php } ?>
+
+                                        <?php if (hasPermission($_SESSION['user_id'], 'edit_student_enrollment')) { ?>
+                                        <form action="process_enrollment.php" method="post"
+                                            style="display:inline-block;" class="mr-1">
+                                            <input type="hidden" name="enrollment_id"
+                                                value="<?= $row['enrollment_id'] ?>">
+                                            <select name="new_status" class="form-control-sm"
+                                                style="border-top-right-radius: 0; border-bottom-right-radius: 0;">
+                                                <option value="active"
+                                                    <?= $row['enrollment_status'] == 'active' ? 'selected' : '' ?>>
+                                                    Active</option>
+                                                <option value="pending"
+                                                    <?= $row['enrollment_status'] == 'pending' ? 'selected' : '' ?>>
+                                                    Pending</option>
+                                                <option value="completed"
+                                                    <?= $row['enrollment_status'] == 'completed' ? 'selected' : '' ?>>
+                                                    Completed</option>
+                                                <option value="cancelled"
+                                                    <?= $row['enrollment_status'] == 'cancelled' ? 'selected' : '' ?>>
+                                                    Cancelled</option>
                                             </select>
                                         </form>
-
-                                        <form action="delete_enrollment.php" method="post" id="deleteForm<?= $row['enrollment_id'] ?>">
-                                            <input type="hidden" name="enrollment_id" value="<?= $row['enrollment_id'] ?>">
-                                            <button type="button" class="btn btn-danger btn-sm mt-1" title="Delete Enrollment" onclick="confirmDeleteSweet(<?= $row['enrollment_id'] ?>)"><i class="fas fa-trash"></i></button>
+                                        <?php } ?>
+                                        <?php if (hasPermission($_SESSION['user_id'], 'delete_student_enrollment')) { ?>
+                                        <form action="process_enrollment.php" method="post"
+                                            style="display:inline-block;" id="deleteForm<?= $row['enrollment_id'] ?>">
+                                            <input type="hidden" name="enrollment_id"
+                                                value="<?= $row['enrollment_id'] ?>">
+                                            <input type="hidden" name="delete_enrollment" value="1">
+                                            <button type="button" class="btn btn-danger btn-sm"
+                                                title="Delete Enrollment"
+                                                onclick="confirmDelete(<?= $row['enrollment_id'] ?>)"><i
+                                                    class="fas fa-trash"></i></button>
                                         </form>
+                                        <?php } ?>
                                     </div>
                                 </td>
                             </tr>

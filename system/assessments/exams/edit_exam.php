@@ -1,6 +1,18 @@
 <?php
 ob_start();
 include '../../../init.php';
+if (!hasPermission($_SESSION['user_id'], 'edit_exam')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
+
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
+
+    header("Location: $backUrl");
+    exit;
+}
+// No user role check for now, will add later
+// if (!isset($_SESSION['user_id'])) { header("Location:../login.php"); exit(); }
 
 $db = dbConn();
 $messages = [];

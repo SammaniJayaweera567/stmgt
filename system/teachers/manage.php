@@ -1,6 +1,16 @@
 <?php
 ob_start();
 include '../../init.php';
+if (!hasPermission($_SESSION['user_id'], 'manage_teacher')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
+
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
+
+    header("Location: $backUrl");
+    exit;
+}
 ?>
 
 <div class="container-fluid">
@@ -18,7 +28,9 @@ include '../../init.php';
     <div class="row">
         <div class="col-12">
             <div class="d-flex justify-content-start mb-4">
+                <?php if (hasPermission($_SESSION['user_id'], 'add_teacher')) { ?>
                 <a href="add.php" class="btn btn-primary"><i class="fas fa-plus-circle me-1"></i> Add New Teacher</a>
+                <?php } ?>
             </div>
             <div class="card">
                 <div class="card-header">
@@ -69,15 +81,19 @@ include '../../init.php';
                                     </td>
                                     <td>
                                         <div class="btn-group">
+                                            <?php if (hasPermission($_SESSION['user_id'], 'show_teacher')) { ?>
                                             <a href="view.php?user_id=<?= $row['Id'] ?>" class="btn btn-info btn-sm mr-1"
                                                 title="View Teacher">
                                                 <i class="fas fa-eye"></i>
                                             </a>
-
+                                            <?php } ?>
+                                            <?php if (hasPermission($_SESSION['user_id'], 'edit_teacher')) { ?>
                                             <a href="edit.php?user_id=<?= $row['Id'] ?>" class="btn btn-primary btn-sm mr-1"
                                                 title="Edit Teacher">
                                                 <i class="fas fa-edit"></i>
                                             </a>
+                                            <?php } ?>
+                                            <?php if (hasPermission($_SESSION['user_id'], 'delete_teacher')) { ?>
 
                                             <form action="delete.php" method="post" style="display:inline-block;"
                                                 id="deleteForm<?= $row['Id'] ?>">
@@ -89,6 +105,7 @@ include '../../init.php';
                                                     <i class="fas fa-trash"></i>
                                                 </button>
                                             </form>
+                                            <?php } ?>
                                         </div>
                                     </td>
                                 </tr>

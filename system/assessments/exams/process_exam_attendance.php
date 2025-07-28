@@ -2,7 +2,16 @@
 // Set the content type to JSON as this file only returns data
 header('Content-Type: application/json');
 include '../../../init.php'; // Corrected path for nested folders
+if (!hasPermission($_SESSION['user_id'], 'edit_exam')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
 
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
+
+    header("Location: $backUrl");
+    exit;
+}
 // Prepare a default error response
 $response = ['status' => 'error', 'message' => 'An unknown error occurred.'];
 

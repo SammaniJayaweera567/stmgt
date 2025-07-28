@@ -1,22 +1,18 @@
 <?php
 ob_start();
 include '../../../init.php'; // Correct path from /system/assessments/assignments/
+if (!hasPermission($_SESSION['user_id'], 'show_assignment')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
 
-$db = dbConn(); // Database connection
-$messages = []; // For displaying user messages
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
 
-// --- Security Check ---
-if (!isset($_SESSION['user_id'])) {
-    header("Location: " . WEB_URL . "auth/login.php"); // Redirect to system login
-    exit();
+    header("Location: $backUrl");
+    exit;
 }
-$user_role_name = strtolower($_SESSION['user_role_name'] ?? '');
-
-// Allow access only if Admin or Teacher
-if ($user_role_name !== 'admin' && $user_role_name !== 'teacher') { 
-    header("Location: manage_assignments.php?status=error&message=Access Denied: You do not have permission to view submissions.");
-    exit();
-}
+$db = dbConn();
+$messages = [];
 
 $assignment_id = (int)($_GET['assignment_id'] ?? 0); // Get assignment ID from URL
 

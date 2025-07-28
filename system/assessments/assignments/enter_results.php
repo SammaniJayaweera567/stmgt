@@ -1,8 +1,21 @@
 <?php
 ob_start();
 include '../../../init.php'; // Correct path from /system/assessments/assignments/
+if (!hasPermission($_SESSION['user_id'], 'assignments_result')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
 
-$db = dbConn(); // Database connection
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
+
+    header("Location: $backUrl");
+    exit;
+}
+// --- Security Check (REMOVED AS PER REQUEST for development) ---
+// if (!isset($_SESSION['user_id'])) {
+//     header("Location: ../../../login.php"); // Redirect to system login
+//     exit();
+// }
 
 // --- Security Check ---
 if (!isset($_SESSION['user_id'])) {

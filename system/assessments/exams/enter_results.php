@@ -1,12 +1,19 @@
 <?php
 ob_start();
-include '../../../init.php';
+include '../../../init.php'; // Corrected path
+if (!hasPermission($_SESSION['user_id'], 'edit_exam')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
 
-// --- Security Check & Initial Setup ---
-if (!isset($_SESSION['user_id'])) { 
-    header("Location:../login.php"); 
-    exit(); 
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
+
+    header("Location: $backUrl");
+    exit;
 }
+// Check if the logged-in user has the correct role OR is the Super Admin (ID = 1).
+// $logged_in_user_id = (int)$_SESSION['user_id'];
+// $user_role_name = ''; 
 
 $db = dbConn();
 $messages = [];

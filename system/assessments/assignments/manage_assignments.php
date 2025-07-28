@@ -1,7 +1,16 @@
 <?php
 ob_start();
 include '../../../init.php'; // Correct path from /system/assessments/assignments/
+if (!hasPermission($_SESSION['user_id'], 'manage_assignment')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
 
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
+
+    header("Location: $backUrl");
+    exit;
+}
 $db = dbConn();
 ?>
 
@@ -18,9 +27,11 @@ $db = dbConn();
     <div class="row">
         <div class="col-12">
             <div class="d-flex justify-content-start mb-4">
+                <?php if (hasPermission($_SESSION['user_id'], 'add_assignment')) { ?>
                 <a href="add_assignment.php" class="btn btn-primary">
                     <i class="fas fa-plus-circle me-1"></i> Add New Assignment
                 </a>
+                <?php } ?>
             </div>
             <div class="card">
                 <div class="card-header">
@@ -77,21 +88,33 @@ $db = dbConn();
                                             <td><?= display_status_badge($row['status']) ?></td>
                                             <td class="text-start">
                                                 <div class="btn-group">
+                                                    <!-- VIEW BUTTON -->
+                                                    <?php if (hasPermission($_SESSION['user_id'], 'edit_assignment')) { ?>
                                                     <a href="edit_assignment.php?id=<?= $row['id'] ?>" class="btn btn-primary btn-sm mr-1" title="Edit Assignment">
                                                         <i class="fas fa-edit"></i>
                                                     </a>
+                                                    <?php } ?>
+                                                    <!-- DELETE BUTTON -->
+                                                    <?php if (hasPermission($_SESSION['user_id'], 'delete_assignment')) { ?>
                                                     <form action="delete_assignment.php" method="post" style="display:inline-block;" id="deleteForm<?= $row['id'] ?>">
                                                         <input type="hidden" name="id" value="<?= $row['id'] ?>">
                                                         <button type="button" onclick="confirmDelete(<?= $row['id'] ?>)" class="btn btn-danger btn-sm mr-1" title="Delete Assignment">
                                                             <i class="fas fa-trash"></i>
                                                         </button>
                                                     </form>
+                                                    <?php } ?>
+                                                    <!-- VIEW SUBMISSIONS and ENTER RESULTS -->
+                                                    <?php if (hasPermission($_SESSION['user_id'], 'show_assignment')) { ?>
                                                     <a href="view_submissions.php?assignment_id=<?= $row['id'] ?>" class="btn btn-info btn-sm mr-1" title="View Submissions">
                                                         <i class="fas fa-upload"></i>
                                                     </a>
+                                                     <?php } ?>
+                                                    <!-- ENTER RESULTS -->
+                                                    <?php if (hasPermission($_SESSION['user_id'], 'assignments_result')) { ?>
                                                     <a href="enter_results.php?assignment_id=<?= $row['id'] ?>" class="btn btn-success btn-sm" title="Enter Results">
                                                         <i class="fas fa-clipboard-check"></i>
                                                     </a>
+                                                    <?php } ?>
                                                 </div>
                                             </td>
                                         </tr>

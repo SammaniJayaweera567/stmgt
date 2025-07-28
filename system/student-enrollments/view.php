@@ -1,7 +1,16 @@
 <?php
 ob_start();
 include '../../init.php';
+if (!hasPermission($_SESSION['user_id'], 'show_student_enrollment')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
 
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
+
+    header("Location: $backUrl");
+    exit;
+}
 // Check if an ID is passed via POST method
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['enrollment_id'])) {
     $id = dataClean($_POST['enrollment_id']);
