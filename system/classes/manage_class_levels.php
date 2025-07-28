@@ -3,7 +3,16 @@ ob_start();
 // [FIX 1] All paths corrected to '../'
 include '../../init.php';
 
+if (!hasPermission($_SESSION['user_id'], 'manage_class_level')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
 
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
+
+    header("Location: $backUrl");
+    exit;
+}
 // Show success message from URL status
 if (isset($_GET['status'])) {
     $message = '';
@@ -33,7 +42,9 @@ if (isset($_GET['status'])) {
         </div>
         <div class="col-12 mt-3">
             <div class="d-flex justify-content-start mb-4">
+                <?php if (hasPermission($_SESSION['user_id'], 'add_class_level')) { ?>
                 <a href="add_class_levels.php" class="btn btn-primary"><i class="fas fa-plus-circle me-1"></i> Add New Class Level</a>
+                <?php } ?>
             </div>
             <div class="card">
                 <div class="card-header table-headers-bg">
@@ -71,18 +82,22 @@ if (isset($_GET['status'])) {
                                                 ?>
                                             </td>
                                             <td class="text-start">
+                                                <?php if (hasPermission($_SESSION['user_id'], 'edit_class_level')) { ?>
                                                 <form action="edit_class_levels.php" method="post" style="display:inline-block;">
                                                     <input type="hidden" name="id" value="<?= $row['id'] ?>">
                                                     <button type="submit" class="btn btn-primary btn-sm" title="Edit Level">
                                                         <i class="fas fa-edit"></i>
                                                     </button>
                                                 </form>
+                                                <?php } ?>
+                                                <?php if (hasPermission($_SESSION['user_id'], 'delete_class_level')) { ?>
                                                 <form action="delete_class_level.php" method="post" style="display:inline-block;" id="frmdelete<?= $row['id'] ?>">
                                                     <input type="hidden" name="id" value="<?= $row['id'] ?>">
                                                     <button type="button" onclick="confirmDelete(<?= $row['id'] ?>)" class="btn btn-danger btn-sm" title="Delete Level">
                                                         <i class="fas fa-trash"></i>
                                                     </button>
                                                 </form>
+                                                <?php } ?>
                                             </td>
                                         </tr>
                                 <?php

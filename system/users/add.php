@@ -5,6 +5,16 @@ include '../../init.php';
 if (!isset($_SESSION['user_id'])) {
     header("Location:../login.php");
 }
+if (!hasPermission($_SESSION['user_id'], 'create_new_user')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
+
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
+
+    header("Location: $backUrl");
+    exit;
+}
 ?>
 <div class="container-fluid">
     <div class="card card-primary">

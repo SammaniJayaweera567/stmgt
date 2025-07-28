@@ -1,7 +1,16 @@
 <?php
 ob_start();
 include '../../init.php'; // Make sure the path to your init file is correct
+if (!hasPermission($_SESSION['user_id'], 'academic-years-delete')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
 
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
+
+    header("Location: $backUrl");
+    exit;
+}
 // Check if the form was submitted via POST and an ID is present
 if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['id'])) {
     $db = dbConn();

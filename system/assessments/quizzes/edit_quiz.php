@@ -1,24 +1,18 @@
 <?php
 ob_start();
 include '../../../init.php'; // Path from /system/assessments/quizzes/
+if (!hasPermission($_SESSION['user_id'], 'edit_quizz')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
 
-$db = dbConn(); // Database connection
-$messages = []; // For displaying user messages
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
 
-// --- Security Check ---
-// (මම මෙය කලින්ම එකතු කර දුන් කෝඩ් එකේ තිබිය යුතුයි. මෙහි නැවත සඳහන් කරන්නේ ඒ බව මතක් කිරීමටයි.)
-if (!isset($_SESSION['user_id'])) {
-    header("Location: " . WEB_URL . "auth/login.php");
-    exit();
+    header("Location: $backUrl");
+    exit;
 }
-$user_role_name = strtolower($_SESSION['user_role_name'] ?? '');
-
-// Allow access only if Admin or Teacher
-if ($user_role_name !== 'admin' && $user_role_name !== 'teacher') { 
-    header("Location: manage_quizzes.php?status=error&message=Access Denied: You do not have permission to edit quizzes.");
-    exit();
-}
-
+$db = dbConn();
+$messages = [];
 $id = (int)($_REQUEST['id'] ?? 0);
 
 if ($id === 0) {

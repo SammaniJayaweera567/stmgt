@@ -1,7 +1,16 @@
 <?php
 ob_start();
 include '../../../init.php'; 
+if (!hasPermission($_SESSION['user_id'], 'manage_discount_type')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
 
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
+
+    header("Location: $backUrl");
+    exit;
+}
 $db = dbConn();
 ?>
 
@@ -17,7 +26,9 @@ $db = dbConn();
     <div class="row">
         <div class="col-12">
             <div class="d-flex justify-content-start mb-4">
+                <?php if (hasPermission($_SESSION['user_id'], 'add_discount_type')) { ?>
                 <a href="add_type.php" class="btn btn-primary"><i class="fas fa-plus-circle me-1"></i> Add New Discount Type</a>
+                <?php } ?>
             </div>
             <div class="card">
                 <div class="card-header">
@@ -56,15 +67,19 @@ $db = dbConn();
                                                 ?>
                                             </td>
                                             <td class="text-center">
+                                                <?php if (hasPermission($_SESSION['user_id'], 'edit_discount_type')) { ?>
                                                 <a href="edit_type.php?id=<?= $row['id'] ?>" class="btn btn-primary btn-sm" title="Edit Type">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
+                                                <?php } ?>
+                                                <?php if (hasPermission($_SESSION['user_id'], 'delete_discount_type')) {    ?>
                                                 <form action="delete_type.php" method="post" style="display:inline-block;" onsubmit="return confirm('Are you sure you want to delete this type?');">
                                                     <input type="hidden" name="id" value="<?= $row['id'] ?>">
                                                     <button type="submit" class="btn btn-danger btn-sm" title="Delete Type">
                                                         <i class="fas fa-trash"></i>
                                                     </button>
                                                 </form>
+                                                <?php } ?>
                                             </td>
                                         </tr>
                                 <?php

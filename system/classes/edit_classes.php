@@ -2,7 +2,16 @@
 ob_start();
 include '../../init.php'; // Assuming init.php contains dbConn() and dataClean()
 
+if (!hasPermission($_SESSION['user_id'], 'edit_classes')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
 
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
+
+    header("Location: $backUrl");
+    exit;
+}
 $db = dbConn(); // Database connection
 $messages = [];
 $class_id = null;

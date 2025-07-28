@@ -7,7 +7,16 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: ../login.php");
     exit();
 }
+if (!hasPermission($_SESSION['user_id'], 'manage_notice')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
 
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
+
+    header("Location: $backUrl");
+    exit;
+}
 $db = dbConn(); // Get database connection
 
 // Initialize messages array to prevent warnings on first load
@@ -194,11 +203,13 @@ $notice_types = ['General', 'Academic', 'Event', 'Urgent', 'Holiday']; // Custom
                     </button>
                 </li>
                 <li class="nav-item" role="presentation">
+                    <?php if (hasPermission($_SESSION['user_id'], 'add_notice')) { ?>
                     <button class="nav-link" id="add-tab" data-bs-toggle="tab" data-bs-target="#add" type="button"
                         role="tab">
                         <i class="fas fa-plus-circle me-1" style="font-size: 15px; margin-right: 5px;"></i>
                         Add New Notice
                     </button>
+                    <?php } ?>
                 </li>
             </ul>
 
@@ -225,20 +236,34 @@ $notice_types = ['General', 'Academic', 'Event', 'Urgent', 'Holiday']; // Custom
                                         <?php
                                         if ($allNoticesResult && $allNoticesResult->num_rows > 0) {
                                             while ($row = $allNoticesResult->fetch_assoc()) {
-                                                echo "<tr>
-                                                        <td>" . htmlspecialchars($row['id']) . "</td>
-                                                        <td>" . htmlspecialchars($row['title']) . "</td>
-                                                        <td><div style='max-height: 80px; overflow-y: auto; white-space: pre-wrap;'>" . htmlspecialchars($row['description']) . "</div></td>
-                                                        <td>" . htmlspecialchars($row['notice_type']) . "</td>
-                                                        <td>" . htmlspecialchars($row['published_date']) . "</td>
-                                                        <td>" . htmlspecialchars($row['expiry_date'] ?: 'N/A') . "</td>
-                                                        <td>" . ($row['is_active'] ? 'Yes' : 'No') . "</td>
-                                                        <td>
-                                                            <button type='button' class='btn btn-info btn-sm view-btn me-1' data-id='{$row['id']}'><i class='fas fa-eye'></i></button>
-                                                            <button type='button' class='btn btn-primary btn-sm edit-btn' data-id='{$row['id']}' data-bs-toggle='modal' data-bs-target='#editNoticeModal'><i class='fas fa-edit'></i></button>
-                                                            <button type='button' class='btn btn-danger btn-sm delete-btn' data-id='{$row['id']}'><i class='fas fa-trash'></i></button>
-                                                        </td>
-                                                    </tr>";
+                                               echo "<tr>
+                                                    <td>" . htmlspecialchars($row['id']) . "</td>
+                                                    <td>" . htmlspecialchars($row['title']) . "</td>
+                                                    <td><div style='max-height: 80px; overflow-y: auto; white-space: pre-wrap;'>" . htmlspecialchars($row['description']) . "</div></td>
+                                                    <td>" . htmlspecialchars($row['notice_type']) . "</td>
+                                                    <td>" . htmlspecialchars($row['published_date']) . "</td>
+                                                    <td>" . htmlspecialchars($row['expiry_date'] ?: 'N/A') . "</td>
+                                                    <td>" . ($row['is_active'] ? 'Yes' : 'No') . "</td>
+                                                    <td>";
+
+                                                // Buttons with permission checks
+                                                if (hasPermission($_SESSION['user_id'], 'show_notice')) {
+                                                    echo "<button type='button' class='btn btn-info btn-sm view-btn me-1' data-id='" . htmlspecialchars($row['id']) . "'>
+                                                            <i class='fas fa-eye'></i>
+                                                        </button>";
+                                                }
+                                                if (hasPermission($_SESSION['user_id'], 'edit_notice')) {
+                                                    echo "<button type='button' class='btn btn-primary btn-sm edit-btn' data-id='" . htmlspecialchars($row['id']) . "' data-bs-toggle='modal' data-bs-target='#editNoticeModal'>
+                                                            <i class='fas fa-edit'></i>
+                                                        </button>";
+                                                }
+                                                if (hasPermission($_SESSION['user_id'], 'delete_notice')) {
+                                                    echo "<button type='button' class='btn btn-danger btn-sm delete-btn' data-id='" . htmlspecialchars($row['id']) . "'>
+                                                            <i class='fas fa-trash'></i>
+                                                        </button>";
+                                                }
+
+                                                echo "</td></tr>";
                                             }
                                         } else {
                                             echo "<tr><td colspan='8' class='text-center'>No notices found.</td></tr>";

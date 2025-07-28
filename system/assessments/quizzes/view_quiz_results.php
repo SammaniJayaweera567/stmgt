@@ -1,7 +1,16 @@
 <?php
 ob_start();
 include '../../../init.php'; // Path from /system/assessments/quizzes/
+if (!hasPermission($_SESSION['user_id'], 'show_quizz')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
 
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
+
+    header("Location: $backUrl");
+    exit;
+}
 $db = dbConn();
 $quiz_id = (int)($_GET['quiz_id'] ?? 0);
 

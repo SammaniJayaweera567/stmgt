@@ -2,7 +2,16 @@
 ob_start();
 // Path from system/payments/
 include '../../init.php'; 
+if (!hasPermission($_SESSION['user_id'], 'manage_student_discount')) {
+    // Set error message in session
+    $_SESSION['error'] = "⚠️ You don't have permission to access this page.";
 
+    // Redirect back using HTTP_REFERER if available, else fallback to dashboard
+    $backUrl = $_SERVER['HTTP_REFERER'] ?? '../dashboard.php';
+
+    header("Location: $backUrl");
+    exit;
+}
 $db = dbConn();
 ?>
 
@@ -18,7 +27,9 @@ $db = dbConn();
     <div class="row">
         <div class="col-12">
             <div class="d-flex justify-content-start mb-4">
+                <?php if (hasPermission($_SESSION['user_id'], 'add_student_discount')) { ?>
                 <a href="add_discount.php" class="btn btn-primary"><i class="fas fa-plus-circle me-1"></i> Add New Discount</a>
+                <?php } ?>
             </div>
             <div class="card">
                 <div class="card-header">
@@ -82,15 +93,19 @@ $db = dbConn();
                                             <td><?= htmlspecialchars($row['reason']) ?></td>
                                             <td><?= display_status_badge($row['status']) ?></td>
                                             <td class="text-center">
+                                                <?php if (hasPermission($_SESSION['user_id'], 'edit_student_discount')) { ?>
                                                 <a href="edit_discount.php?id=<?= $row['id'] ?>" class="btn btn-primary btn-sm" title="Edit Discount">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
+                                                <?php } ?>
+                                                <?php if (hasPermission($_SESSION['user_id'], 'delete_student_discount')) { ?>
                                                 <form action="delete_discount.php" method="post" style="display:inline-block;" onsubmit="return confirm('Are you sure you want to delete this discount?');">
                                                     <input type="hidden" name="id" value="<?= $row['id'] ?>">
                                                     <button type="submit" class="btn btn-danger btn-sm" title="Delete Discount">
                                                         <i class="fas fa-trash"></i>
                                                     </button>
                                                 </form>
+                                                <?php } ?>
                                             </td>
                                         </tr>
                                 <?php
