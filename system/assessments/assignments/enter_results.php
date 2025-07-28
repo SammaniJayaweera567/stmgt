@@ -11,6 +11,7 @@ if (!hasPermission($_SESSION['user_id'], 'assignments_result')) {
     header("Location: $backUrl");
     exit;
 }
+$db = dbConn();
 // --- Security Check (REMOVED AS PER REQUEST for development) ---
 // if (!isset($_SESSION['user_id'])) {
 //     header("Location: ../../../login.php"); // Redirect to system login
