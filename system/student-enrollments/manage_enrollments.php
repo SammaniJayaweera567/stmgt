@@ -1,6 +1,6 @@
 <?php
 ob_start();
-include '../../init.php'; // ඔබගේ init.php ගොනුවට නිවැරදි path එක දෙන්න
+include '../../init.php';
 
 show_status_message(); 
 ?>
@@ -14,9 +14,7 @@ show_status_message();
     <div class="row">
         <div class="col-12">
             <div class="card">
-                <div class="card-header">
-                    <h6 class="card-title" style="font-size: 1.05rem !important;">Enrollment List</h6>
-                </div>
+                <div class="card-header"><h6 class="card-title">Enrollment List</h6></div>
                 <div class="card-body">
                     <table id="enrollmentTable" class="table table-bordered table-striped">
                         <thead>
@@ -31,94 +29,42 @@ show_status_message();
                         <tbody>
                             <?php
                             $db = dbConn();
-                            $sql = "SELECT
-                                        e.id AS enrollment_id,
-                                        e.status AS enrollment_status,
-                                        e.enrollment_date,
-                                        u.FirstName,
-                                        u.LastName,
-                                        u.ProfileImage,
-                                        s.subject_name,
-                                        cl.level_name,
-                                        ct.type_name AS class_type
-                                    FROM
-                                        enrollments AS e
-                                    JOIN
-                                        users AS u ON e.student_user_id = u.Id
-                                    JOIN
-                                        classes AS c ON e.class_id = c.id
-                                    JOIN
-                                        subjects AS s ON c.subject_id = s.id
-                                    JOIN
-                                        class_levels AS cl ON c.class_level_id = cl.id
-                                    JOIN
-                                        class_types AS ct ON c.class_type_id = ct.id
-                                    WHERE
-                                        u.user_role_id = 4
-                                    ORDER BY
-                                        e.id DESC";
+                            $sql = "SELECT e.id AS enrollment_id, e.status AS enrollment_status, e.enrollment_date, u.FirstName, u.LastName, u.ProfileImage, s.subject_name, cl.level_name, ct.type_name AS class_type FROM enrollments AS e JOIN users AS u ON e.student_user_id = u.Id JOIN classes AS c ON e.class_id = c.id JOIN subjects AS s ON c.subject_id = s.id JOIN class_levels AS cl ON c.class_level_id = cl.id JOIN class_types AS ct ON c.class_type_id = ct.id WHERE u.user_role_id = 4 ORDER BY e.id DESC";
                             $result = $db->query($sql);
-                            while ($row = $result->fetch_assoc()) {
+                            if ($result && $result->num_rows > 0) {
+                                while ($row = $result->fetch_assoc()) {
                             ?>
                             <tr>
                                 <td>
-                                    <img src="../../web/uploads/profile_images/<?= htmlspecialchars(!empty($row['ProfileImage']) ? $row['ProfileImage'] : 'default_avatar.png') ?>"
-                                        class="rounded-circle me-2" width="40" height="40" style="object-fit:cover;">
+                                    <img src="../../web/uploads/profile_images/<?= htmlspecialchars(!empty($row['ProfileImage']) ? $row['ProfileImage'] : 'default_avatar.png') ?>" class="rounded-circle me-2" width="40" height="40" style="object-fit:cover;">
                                     <?= htmlspecialchars($row['FirstName'] . ' ' . $row['LastName']) ?>
                                 </td>
-                                <td><?= htmlspecialchars($row['level_name'] . ' | ' . $row['subject_name'] . ' (' . $row['class_type'] . ')') ?>
-                                </td>
+                                <td><?= htmlspecialchars($row['level_name'] . ' | ' . $row['subject_name'] . ' (' . $row['class_type'] . ')') ?></td>
                                 <td><?= htmlspecialchars($row['enrollment_date']) ?></td>
                                 <td><?= display_status_badge($row['enrollment_status']) ?></td>
                                 <td>
                                     <div class="btn-group">
-                                        <form action="view.php" method="post" style="display:inline-block;"
-                                            class="mr-1">
-                                            <input type="hidden" name="enrollment_id"
-                                                value="<?= $row['enrollment_id'] ?>">
-                                            <button type="submit" class="btn btn-info btn-sm" title="View Details"><i
-                                                    class="fas fa-eye"></i></button>
-                                        </form>
-
-                                        <form action="process_enrollment.php" method="post"
-                                            style="display:inline-block;" class="mr-1">
-                                            <input type="hidden" name="enrollment_id"
-                                                value="<?= $row['enrollment_id'] ?>">
-                                            <select name="new_status" class="form-control-sm"
-                                                style="border-top-right-radius: 0; border-bottom-right-radius: 0;">
-                                                <option value="active"
-                                                    <?= $row['enrollment_status'] == 'active' ? 'selected' : '' ?>>
-                                                    Active</option>
-                                                <option value="pending"
-                                                    <?= $row['enrollment_status'] == 'pending' ? 'selected' : '' ?>>
-                                                    Pending</option>
-                                                <option value="completed"
-                                                    <?= $row['enrollment_status'] == 'completed' ? 'selected' : '' ?>>
-                                                    Completed</option>
-                                                <option value="cancelled"
-                                                    <?= $row['enrollment_status'] == 'cancelled' ? 'selected' : '' ?>>
-                                                    Cancelled</option>
+                                        <form action="process_enrollment_status.php" method="post" class="me-2 mr-1">
+                                            <input type="hidden" name="enrollment_id" value="<?= $row['enrollment_id'] ?>">
+                                            <select name="new_status" class="form-select-sm form-control" onchange="this.form.submit()">
+                                                <option value="active" <?= $row['enrollment_status'] == 'active' ? 'selected' : '' ?>>Active</option>
+                                                <option value="pending" <?= $row['enrollment_status'] == 'pending' ? 'selected' : '' ?>>Pending</option>
+                                                <option value="completed" <?= $row['enrollment_status'] == 'completed' ? 'selected' : '' ?>>Completed</option>
+                                                <option value="cancelled" <?= $row['enrollment_status'] == 'cancelled' ? 'selected' : '' ?>>Cancelled</option>
                                             </select>
-                                            <button type="submit" name="update_status" class="btn btn-primary btn-sm"
-                                                title="Update Status"
-                                                style="border-top-left-radius: 0; border-bottom-left-radius: 0;"><i
-                                                    class="fas fa-check"></i></button>
                                         </form>
 
-                                        <form action="process_enrollment.php" method="post"
-                                            style="display:inline-block;" id="deleteForm<?= $row['enrollment_id'] ?>">
-                                            <input type="hidden" name="enrollment_id"
-                                                value="<?= $row['enrollment_id'] ?>">
-                                            <input type="hidden" name="delete_enrollment" value="1">
-                                            <button type="button" class="btn btn-danger btn-sm"
-                                                title="Delete Enrollment"
-                                                onclick="confirmDelete(<?= $row['enrollment_id'] ?>)"><i
-                                                    class="fas fa-trash"></i></button>
+                                        <form action="delete_enrollment.php" method="post" id="deleteForm<?= $row['enrollment_id'] ?>">
+                                            <input type="hidden" name="enrollment_id" value="<?= $row['enrollment_id'] ?>">
+                                            <button type="button" class="btn btn-danger btn-sm mt-1" title="Delete Enrollment" onclick="confirmDeleteSweet(<?= $row['enrollment_id'] ?>)"><i class="fas fa-trash"></i></button>
                                         </form>
                                     </div>
                                 </td>
                             </tr>
-                            <?php } ?>
+                            <?php 
+                                }
+                            }
+                            ?>
                         </tbody>
                     </table>
                 </div>
@@ -128,29 +74,22 @@ show_status_message();
 </div>
 
 <script>
-// Delete confirmation function (දැන් නිවැරදිව ක්‍රියා කරයි)
-function confirmDelete(id) {
-    if (confirm("Are you sure you want to delete this enrollment record? This action cannot be undone.")) {
-        document.getElementById('deleteForm' + id).submit();
-    }
+function confirmDeleteSweet(id) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Yes, delete it!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            document.getElementById('deleteForm' + id).submit();
+        }
+    })
 }
-
-// DataTable initialization
-$(function() {
-    $("#enrollmentTable")
-        .DataTable({
-            "responsive": true,
-            "lengthChange": true,
-            "autoWidth": false,
-            "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
-            "order": [
-                [2, "desc"]
-            ]
-        })
-        .buttons()
-        .container()
-        .appendTo("#enrollmentTable_wrapper .col-md-6:eq(0)");
-});
+$(document).ready(function() { $('#enrollmentTable').DataTable(); });
 </script>
 
 <?php

@@ -2,8 +2,21 @@
 ob_start();
 include '../../../init.php'; // Correct path from /system/assessments/assignments/
 
-$db = dbConn();
-$messages = [];
+$db = dbConn(); // Database connection
+$messages = []; // For displaying user messages
+
+// --- Security Check ---
+if (!isset($_SESSION['user_id'])) {
+    header("Location: " . WEB_URL . "auth/login.php"); // Redirect to system login
+    exit();
+}
+$user_role_name = strtolower($_SESSION['user_role_name'] ?? '');
+
+// Allow access only if Admin or Teacher
+if ($user_role_name !== 'admin' && $user_role_name !== 'teacher') { 
+    header("Location: manage_assignments.php?status=error&message=Access Denied: You do not have permission to view submissions.");
+    exit();
+}
 
 $assignment_id = (int)($_GET['assignment_id'] ?? 0); // Get assignment ID from URL
 
@@ -13,6 +26,7 @@ if ($assignment_id === 0) {
 }
 
 // --- Fetch Assignment Details ---
+// UPDATED: Use assessment_type_id for filtering
 $sql_assignment = "SELECT 
                         a.id, a.title, a.max_marks, a.due_date, a.status,
                         cl.level_name, s.subject_name, ct.type_name,
@@ -22,16 +36,16 @@ $sql_assignment = "SELECT
                     JOIN class_levels cl ON c.class_level_id = cl.id
                     JOIN subjects s ON c.subject_id = s.id
                     JOIN class_types ct ON c.class_type_id = ct.id
-                    WHERE a.id = '$assignment_id' AND a.assessment_type = 'Assignment'";
+                    WHERE a.id = '$assignment_id' AND a.assessment_type_id = 2"; // Changed to assessment_type_id = 2 (for Assignment)
 $result_assignment = $db->query($sql_assignment);
 
 if ($result_assignment->num_rows === 0) {
     header("Location: manage_assignments.php?status=notfound&message=Assignment not found or is not an Assignment type.");
     exit();
 }
-$assignment_details = $result_assignment->fetch_assoc();
-$class_id_for_assignment = $assignment_details['class_id_for_assignment'];
-$page_title = "Submissions for " . htmlspecialchars($assignment_details['title']);
+$assignment_details = $result_assignment->fetch_assoc(); // Fetch assignment details
+$class_id_for_assignment = $assignment_details['class_id_for_assignment']; // Get class ID
+$page_title = "Submissions for " . htmlspecialchars($assignment_details['title']); // Page title
 
 
 // --- Handle POST submission (for manual upload/status change by teacher in future) ---
@@ -58,8 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
             }
         } else {
             // If submission_id is not provided (meaning no prior entry in student_submissions table),
-            // CREATE a new 'Submitted' entry for the student. This handles cases where a physical submission happens first.
-            // Ensure this student is enrolled in the class.
+            // CREATE a new 'Submitted' entry for the student.
             $check_enrollment_sql = "SELECT id FROM enrollments WHERE student_user_id = '$student_user_id' AND class_id = '$class_id_for_assignment' AND status = 'active'";
             $enrollment_result = $db->query($check_enrollment_sql);
 
@@ -82,7 +95,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action'])) {
 }
 
 // Fetch all active students enrolled in this assignment's class,
-// along with their submission status and results (if any)
 $sql_students_with_submissions = "SELECT 
                                     u.Id as student_user_id, 
                                     u.FirstName, 
@@ -92,7 +104,7 @@ $sql_students_with_submissions = "SELECT
                                     ss.id as submission_id,
                                     ss.submission_status,
                                     ss.file_name,
-                                    ss.file_path,
+                                    ss.file_path, -- Fetch file_path from DB for correct download link
                                     ss.submitted_at,
                                     ar.marks_obtained,
                                     gr.grade_name
@@ -170,6 +182,12 @@ $result_students = $db->query($sql_students_with_submissions);
                                                     case 'Late Submission': $submission_status_class = 'bg-warning text-dark'; break; // Explicitly handle if already late
                                                     default: $submission_status_class = 'bg-secondary'; break;
                                                 }
+                                            } else {
+                                                // If no submission entry, check if overdue
+                                                if (strtotime('now') > strtotime($assignment_details['due_date'])) {
+                                                    $submission_status_text = 'Overdue';
+                                                    $submission_status_class = 'bg-danger';
+                                                }
                                             }
                                         ?>
                                         <span class="badge <?= $submission_status_class ?>"><?= $submission_status_text ?></span>
@@ -183,7 +201,7 @@ $result_students = $db->query($sql_students_with_submissions);
                                     </td>
                                     <td>
                                         <?php if (!empty($student['file_path'])): ?>
-                                            <a href="../../web/uploads/submissions/<?= htmlspecialchars($student['file_name']) ?>" target="_blank" class="btn btn-sm btn-outline-info" title="Download Submission">
+                                            <a href="<?= WEB_URL ?>web/uploads/submissions/<?= htmlspecialchars($student['file_name']) ?>" target="_blank" class="btn btn-sm btn-outline-info" title="Download Submission">
                                                 <i class="fas fa-download"></i> <?= htmlspecialchars($student['file_name']) ?>
                                             </a>
                                         <?php else: ?>

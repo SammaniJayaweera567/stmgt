@@ -1,6 +1,6 @@
 <?php
 ob_start();
-include '../../init.php'; // Correct path from /web/dashboard/
+include '../../init.php'; // Corrected path from /web/dashboard/
 
 // Session check: Ensure a student is logged in
 if (!isset($_SESSION['user_id']) || strtolower($_SESSION['user_role_name'] ?? '') != 'student') {
@@ -8,9 +8,9 @@ if (!isset($_SESSION['user_id']) || strtolower($_SESSION['user_role_name'] ?? ''
     exit();
 }
 
-$db = dbConn();
+$db = dbConn(); // Database connection
 $logged_in_student_id = (int)$_SESSION['user_id'];
-$messages = [];
+$messages = []; // For displaying user messages
 
 $assignment_id = (int)($_GET['assignment_id'] ?? 0);
 
@@ -20,6 +20,7 @@ if ($assignment_id === 0) {
 }
 
 // --- Fetch Assignment Details for the student ---
+// UPDATED: Use assessment_type_id for filtering
 $sql_assignment_details = "
     SELECT 
         a.id as assessment_id,
@@ -33,13 +34,13 @@ $sql_assignment_details = "
         cl.level_name,
         CONCAT(t.FirstName, ' ', t.LastName) as teacher_name,
         ss.id as submission_id,
-        ss.submission_status,         -- Student's submission status (Submitted, Pending, Late Submission)
-        ss.submitted_at,              -- When student submitted
-        ss.file_name,                 -- Submitted file name
-        ss.file_path,                 -- Submitted file path
-        ar.marks_obtained,            -- Student's marks for this assignment
-        ar.remarks,                   -- Teacher's remarks for this assignment
-        gr.grade_name                 -- Student's grade for this assignment
+        ss.submission_status,      -- Student's submission status (Submitted, Pending, Late Submission)
+        ss.submitted_at,           -- When student submitted
+        ss.file_name,              -- Submitted file name
+        ss.file_path,              -- Submitted file path
+        ar.marks_obtained,         -- Student's marks for this assignment
+        ar.remarks,                -- Teacher's remarks for this assignment
+        gr.grade_name              -- Student's grade for this assignment
     FROM assessments a
     JOIN classes c ON a.class_id = c.id
     JOIN subjects s ON c.subject_id = s.id
@@ -48,7 +49,7 @@ $sql_assignment_details = "
     LEFT JOIN student_submissions ss ON a.id = ss.assessment_id AND ss.student_user_id = '$logged_in_student_id'
     LEFT JOIN assessment_results ar ON a.id = ar.assessment_id AND ar.student_user_id = '$logged_in_student_id'
     LEFT JOIN grades gr ON ar.grade_id = gr.id
-    WHERE a.id = '$assignment_id' AND a.assessment_type = 'Assignment'
+    WHERE a.id = '$assignment_id' AND a.assessment_type_id = 2 -- Changed from assessment_type to assessment_type_id = 2 (for Assignment)
     AND c.id IN (SELECT class_id FROM enrollments WHERE student_user_id = '$logged_in_student_id' AND status = 'active')
 ";
 $result_assignment = $db->query($sql_assignment_details);
@@ -57,7 +58,7 @@ if ($result_assignment->num_rows === 0) {
     header("Location: student.php?status=error&message=Assignment not found or not accessible.");
     exit();
 }
-$assignment_data = $result_assignment->fetch_assoc();
+$assignment_data = $result_assignment->fetch_assoc(); // Fetch assignment data
 
 // Check if assignment is overdue
 $current_datetime = date('Y-m-d H:i:s');
@@ -70,17 +71,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['a
     } elseif (isset($assignment_data['submission_status']) && ($assignment_data['submission_status'] == 'Submitted' || $assignment_data['submission_status'] == 'Late Submission')) {
         $messages['main'] = "You have already submitted this assignment. You cannot resubmit.";
     } elseif (isset($_FILES['assignment_file']) && $_FILES['assignment_file']['error'] == UPLOAD_ERR_OK) {
-        $target_dir = "../../web/uploads/submissions/"; // Correct path from /web/dashboard/
+        // Define target directory and ensure it exists
+        $target_dir_relative_to_root = "web/uploads/submissions/";
+        $target_dir_absolute = __DIR__ . '/../../' . $target_dir_relative_to_root; // Adjust path based on init.php inclusion
+
         // Create directory if it doesn't exist
-        if (!is_dir($target_dir)) {
-            mkdir($target_dir, 0777, true);
+        if (!is_dir($target_dir_absolute)) {
+            mkdir($target_dir_absolute, 0777, true); 
         }
 
         $file_name_raw = basename($_FILES['assignment_file']['name']);
         $file_ext = strtolower(pathinfo($file_name_raw, PATHINFO_EXTENSION));
-        // Generate a unique file name using student_id, assignment_id, and timestamp
         $unique_file_name = $logged_in_student_id . '_' . $assignment_id . '_' . time() . '.' . $file_ext;
-        $target_file = $target_dir . $unique_file_name;
+        $target_file_full_path = $target_dir_absolute . $unique_file_name;
 
         // Basic file validation
         $allowed_types = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'];
@@ -92,41 +95,43 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['a
         }
 
         if (empty($messages['main'])) {
-            if (move_uploaded_file($_FILES['assignment_file']['tmp_name'], $target_file)) {
-                // Update or Insert into student_submissions
+            if (move_uploaded_file($_FILES['assignment_file']['tmp_name'], $target_file_full_path)) {
+                // Store relative path (from project root) in DB
+                $file_path_for_db = $target_dir_relative_to_root . $unique_file_name;
+
                 if ($assignment_data['submission_id'] > 0) { // If a previous entry exists, update it
                     // Get old file path to delete it
-                    $old_file_sql = "SELECT file_path, file_name FROM student_submissions WHERE id='{$assignment_data['submission_id']}'";
+                    $old_file_sql = "SELECT file_path FROM student_submissions WHERE id='{$assignment_data['submission_id']}'";
                     $old_file_result = $db->query($old_file_sql);
                     if ($old_file_result->num_rows > 0) {
                         $old_file_data = $old_file_result->fetch_assoc();
-                        $old_full_path = $target_dir . $old_file_data['file_name'];
-                        if (file_exists($old_full_path) && !is_dir($old_full_path)) { // Ensure it's a file
-                            unlink($old_full_path);
+                        $old_full_path_to_delete = __DIR__ . '/../../' . $old_file_data['file_path']; // Reconstruct absolute path
+                        if (file_exists($old_full_path_to_delete) && !is_dir($old_full_path_to_delete)) { 
+                            unlink($old_full_path_to_delete);
                         }
                     }
-                    $update_sql = "UPDATE student_submissions SET file_name='$unique_file_name', file_path='$unique_file_name', submitted_at=NOW(), submission_status='Submitted' WHERE id='{$assignment_data['submission_id']}'";
+                    $update_sql = "UPDATE student_submissions SET file_name='$unique_file_name', file_path='$file_path_for_db', submitted_at=NOW(), submission_status='Submitted' WHERE id='{$assignment_data['submission_id']}'";
                     $db->query($update_sql);
                 } else {
                     // Create new submission entry
                     $insert_sql = "INSERT INTO student_submissions (assessment_id, student_user_id, file_name, file_path, submitted_at, submission_status)
-                                   VALUES ('$assignment_id', '$logged_in_student_id', '$unique_file_name', '$unique_file_name', NOW(), 'Submitted')";
+                                   VALUES ('$assignment_id', '$logged_in_student_id', '$unique_file_name', '$file_path_for_db', NOW(), 'Submitted')";
                     $db->query($insert_sql);
                 }
-                $_SESSION['status_message'] = "Assignment submitted successfully!";
-                header("Location: view_assignment.php?assignment_id=$assignment_id&status=submitted");
+                $_SESSION['status_message'] = "Assignment submitted successfully!"; 
+                header("Location: view_assignment.php?assignment_id=$assignment_id&status=submitted"); 
                 exit();
             } else {
-                $messages['main'] = "Failed to upload file to server.";
+                $messages['main'] = "Failed to upload file to server. Error: " . error_get_last()['message'];
             }
         }
     } else if (isset($_POST['action']) && $_POST['action'] == 'upload_submission' && $_FILES['assignment_file']['error'] != UPLOAD_ERR_NO_FILE) {
-         $messages['main'] = "File upload error: " . $_FILES['assignment_file']['error'];
+        $messages['main'] = "File upload error: " . $_FILES['assignment_file']['error'];
     }
 }
 
 // Re-fetch assignment data after potential submission (for displaying updated status)
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['action'] == 'upload_submission' && empty($messages['main'])) {
+if (empty($messages['main'])) { // Only re-fetch if no new errors occurred
     $result_assignment = $db->query($sql_assignment_details);
     $assignment_data = $result_assignment->fetch_assoc();
 }
@@ -188,17 +193,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['a
                         <?php 
                         $status_class = 'bg-secondary';
                         $status_text = 'Not Submitted';
+                        // Check submission_status first
                         if (!empty($assignment_data['submission_status'])) {
                             $status_text = htmlspecialchars(ucfirst(str_replace('_', ' ', $assignment_data['submission_status'])));
                             switch ($assignment_data['submission_status']) {
-                                case 'Submitted': $status_class = 'bg-success'; break;
-                                case 'Late Submission': $status_class = 'bg-warning text-dark'; break;
-                                case 'Pending': $status_class = 'bg-primary'; break;
+                                case 'Submitted': $status_class = 'bg-submitted'; break; // Consistent class name
+                                case 'Late Submission': $status_class = 'bg-late-submitted'; break; // Consistent class name
+                                case 'Pending': $status_class = 'bg-pending'; break; // Consistent class name
                                 default: $status_class = 'bg-secondary'; break;
                             }
-                        } elseif ($is_overdue) {
+                        } 
+                        // If no submission status, check if assignment is overdue
+                        elseif ($is_overdue) {
                             $status_class = 'bg-overdue';
                             $status_text = 'Overdue';
+                        }
+                        // If graded, override status to graded
+                        if ($assignment_data['marks_obtained'] !== null) { // This means it's graded
+                            $status_class = 'bg-graded';
+                            $status_text = 'Graded';
                         }
                         echo '<span class="status-badge ' . $status_class . '">' . $status_text . '</span>';
                         ?>
@@ -216,37 +229,48 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['action']) && $_POST['a
                 <p><?= nl2br(htmlspecialchars($assignment_data['description'])) ?></p>
             </div>
 
-            <?php if (!empty($assignment_data['file_name'])): ?>
+            <?php if (!empty($assignment_data['assignment_file_path'])): // Check for assignment file from assessments table ?>
+            <h4 class="mt-4">Download Assignment Questions / Instructions</h4>
+            <div class="submission-info-box text-center">
+                <p>File: <strong><?= htmlspecialchars($assignment_data['assignment_file_name']) ?></strong></p>
+                <a href="<?= WEB_URL ?><?= htmlspecialchars($assignment_data['assignment_file_path']) ?>" target="_blank" class="btn btn-primary mt-2"><i class="fas fa-download"></i> Download Assignment File</a>
+            </div>
+            <?php endif; ?>
+
+
+            <?php if (!empty($assignment_data['file_path'])): // Check for student's submitted file from student_submissions table ?>
             <h4 class="mt-4">Your Submitted File</h4>
             <div class="submission-info-box text-center">
                 <p>File: <strong><?= htmlspecialchars($assignment_data['file_name']) ?></strong></p>
                 <p>Submitted On: <strong><?= htmlspecialchars(date('Y-m-d H:i A', strtotime($assignment_data['submitted_at']))) ?></strong></p>
-                <a href="<?= SYS_URL ?>web/uploads/submissions/<?= htmlspecialchars($assignment_data['file_name']) ?>" target="_blank" class="btn btn-info mt-2"><i class="fas fa-download"></i> Download Submitted File</a>
+                <a href="<?= WEB_URL ?><?= htmlspecialchars($assignment_data['file_path']) ?>" target="_blank" class="btn btn-info mt-2"><i class="fas fa-download"></i> Download Submitted File</a>
             </div>
             <?php endif; ?>
 
+
             <?php 
             // Display upload section based on submission status and due date
-            if ($assignment_data['submission_status'] == null || $assignment_data['submission_status'] == 'Pending'): // Not submitted yet
+            $can_submit = ($assignment_data['submission_status'] == null || $assignment_data['submission_status'] == 'Pending') && !$is_overdue;
+            $can_resubmit = ($assignment_data['submission_status'] == 'Submitted' || $assignment_data['submission_status'] == 'Late Submission') && !$is_overdue; // Allow re-submission if not overdue
+
+            if ($can_submit || $can_resubmit):
             ?>
-                <?php if (!$is_overdue): ?>
-                <div class="upload-section">
-                    <h4>Upload Your Assignment File</h4>
-                    <p class="text-muted">Please upload your assignment file before the due date.</p>
-                    <form action="<?= htmlspecialchars($_SERVER['PHP_SELF']) . '?assignment_id=' . $assignment_id ?>" method="post" enctype="multipart/form-data">
-                        <input type="hidden" name="action" value="upload_submission">
-                        <input type="file" name="assignment_file" required>
-                        <button type="submit" class="btn btn-upload"><i class="fas fa-upload"></i> Upload Assignment</button>
-                    </form>
-                </div>
-                <?php else: // Not submitted and overdue ?>
-                <div class="alert alert-danger text-center mt-4">
-                    This assignment is overdue. Submissions are no longer accepted.
-                </div>
-                <?php endif; ?>
-            <?php elseif ($assignment_data['submission_status'] == 'Submitted' || $assignment_data['submission_status'] == 'Late Submission'): // Already submitted ?>
-            <div class="alert alert-success text-center mt-4">
-                You have successfully submitted this assignment.
+            <div class="upload-section">
+                <h4>Upload Your Assignment File</h4>
+                <p class="text-muted">Please upload your assignment file before the due date. You can resubmit if needed.</p>
+                <form action="<?= htmlspecialchars($_SERVER['PHP_SELF']) . '?assignment_id=' . $assignment_id ?>" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="action" value="upload_submission">
+                    <input type="file" name="assignment_file" required>
+                    <button type="submit" class="btn btn-upload"><i class="fas fa-upload"></i> Upload Assignment</button>
+                </form>
+            </div>
+            <?php elseif ($is_overdue && ($assignment_data['submission_status'] == null || $assignment_data['submission_status'] == 'Pending')): // Not submitted and overdue ?>
+            <div class="alert alert-danger text-center mt-4">
+                This assignment is overdue. Submissions are no longer accepted.
+            </div>
+            <?php else: // Already submitted or graded, and not allowed to re-submit ?>
+            <div class="alert alert-info text-center mt-4">
+                This assignment is <?= htmlspecialchars($assignment_data['submission_status'] ?? $assignment_data['assignment_status']) ?>. No further submissions are allowed.
             </div>
             <?php endif; ?>
 

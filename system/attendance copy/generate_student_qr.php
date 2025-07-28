@@ -1,9 +1,6 @@
 <?php
 ob_start();
 // Start session if not already active
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
 include '../../init.php'; // Path to your init.php
 
 // --- Security Check ---
@@ -73,9 +70,6 @@ QRcode::png($qr_data, $filename, $errorCorrectionLevel, $matrixPointSize, 2);
 <head>
     <meta charset="UTF-8">
     <title>ID Card for <?= $student_name ?></title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Poppins', sans-serif;

@@ -1,153 +1,192 @@
 <?php
 ob_start();
-// [FIX 1] All paths corrected to '../'
 include '../../init.php';
 
 $db = dbConn();
+$messages = []; // To store any validation errors
 
-// --- Step 1: Handle Filters ---
-$filter_class_id = isset($_GET['class_id']) ? (int)$_GET['class_id'] : 0;
-$filter_date = isset($_GET['date']) ? dataClean($_GET['date']) : date('Y-m-d'); // Default to today
+// Get filter values from the URL
+$filter_class_id = dataClean($_GET['class_id'] ?? null);
+$filter_date = dataClean($_GET['date'] ?? '');
+$attendance_records = []; // Initialize an empty array to hold the results
 
-// --- Step 2: Fetch Data for Filter Dropdowns ---
-$sql_classes = "SELECT c.id, s.subject_name, cl.level_name 
-                FROM classes c
-                JOIN subjects s ON c.subject_id = s.id
-                JOIN class_levels cl ON c.class_level_id = cl.id
-                WHERE c.status = 'Active'
-                ORDER BY cl.level_name, s.subject_name";
-$classes_result = $db->query($sql_classes);
+// --- VALIDATION PART ---
+// We only run validations if the user has submitted the form at least once
+if (isset($_GET['class_id'])) {
+    // 1. Validate Class ID
+    if (!empty($filter_class_id)) {
+        $sql_check_class = "SELECT id FROM classes WHERE id = '$filter_class_id' AND status = 'Active'";
+        if ($db->query($sql_check_class)->num_rows == 0) {
+            $messages[] = "The selected class is not valid or is currently inactive.";
+            $filter_class_id = null; // Reset if invalid
+        }
+    } else {
+        $messages[] = "Please select a class to view a report.";
+    }
 
-// --- Step 3: Fetch Attendance Data Based on Filters ---
-$attendance_records = [];
-if ($filter_class_id > 0) {
-    $sql_attendance = "SELECT
-                            a.attendance_date,
-                            a.marked_at,
-                            u_student.FirstName AS student_first_name,
-                            u_student.LastName AS student_last_name,
-                            sd.registration_no,
-                            u_marker.FirstName AS marker_first_name,
-                            u_marker.LastName AS marker_last_name
-                        FROM attendance AS a
-                        JOIN users AS u_student ON a.student_user_id = u_student.Id
-                        JOIN student_details AS sd ON a.student_user_id = sd.user_id
-                        JOIN users AS u_marker ON a.marked_by_user_id = u_marker.Id
-                        WHERE a.class_id = '$filter_class_id' AND a.attendance_date = '$filter_date'
-                        ORDER BY a.marked_at DESC";
+    // 2. Validate Date Format
+    if (!empty($filter_date)) {
+        $d = DateTime::createFromFormat('Y-m-d', $filter_date);
+        if (!$d || $d->format('Y-m-d') !== $filter_date) {
+            $messages[] = "The date format is invalid. Please use the date picker.";
+            $filter_date = null; // Reset if invalid
+        }
+    } else {
+        // Allowing an empty date might be a feature, but if it's required:
+        $messages[] = "Please select a date.";
+    }
+}
+// --- END OF VALIDATION PART ---
+
+
+// Fetch Attendance Data only if there are no validation errors and filters are set
+if (empty($messages) && !empty($filter_class_id) && !empty($filter_date)) {
+    $sql = "SELECT
+                a.status,
+                a.marked_at,
+                u_student.FirstName AS student_first_name,
+                u_student.LastName AS student_last_name,
+                sd.registration_no,
+                u_marker.FirstName AS marker_first_name
+            FROM attendance AS a
+            JOIN users AS u_student ON a.student_user_id = u_student.Id
+            JOIN student_details AS sd ON a.student_user_id = sd.user_id
+            LEFT JOIN users AS u_marker ON a.marked_by_user_id = u_marker.Id
+            WHERE a.class_id = '$filter_class_id' AND a.attendance_date = '$filter_date'
+            ORDER BY u_student.FirstName ASC";
     
-    $attendance_result = $db->query($sql_attendance);
-    if ($attendance_result) {
-        while ($row = $attendance_result->fetch_assoc()) {
+    $result = $db->query($sql);
+    
+    if ($result) {
+        while ($row = $result->fetch_assoc()) {
             $attendance_records[] = $row;
         }
     }
 }
 ?>
 
-<!-- Page-specific CSS -->
-<style>
-    .filter-card {
-        background-color: #fff;
-        padding: 25px;
-        border-radius: 10px;
-        margin-bottom: 30px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    }
-    .table-wrapper {
-        background-color: #fff;
-        padding: 25px;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    }
-    .table thead th {
-        background-color: #f8f9fa;
-        border-bottom-width: 2px;
-        font-weight: 600;
-    }
-    .table tbody tr:hover {
-        background-color: #f1f1f1;
-    }
-</style>
-
 <div class="container-fluid">
-    <!-- Page Header -->
-    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-        <h1 class="h2">Attendance Report</h1>
+    <div class="row mb-4">
+        <div class="d-flex content-header-text">
+            <i class="fas fa-file-alt mt-1 me-2"></i>
+            <h5 class="w-auto">View Attendance Report</h5>
+        </div>
     </div>
 
-    <!-- Filter Section -->
-    <div class="filter-card">
-        <form method="GET" action="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>">
-            <div class="row align-items-end">
-                <div class="col-md-5">
-                    <label for="class_id" class="form-label"><b>Select Class</b></label>
-                    <select name="class_id" id="class_id" class="form-select">
-                        <option value="">-- All Classes --</option>
-                        <?php
-                        if ($classes_result && $classes_result->num_rows > 0) {
-                            mysqli_data_seek($classes_result, 0); // Reset pointer
-                            while ($class = $classes_result->fetch_assoc()) {
-                                $display_text = htmlspecialchars($class['level_name'] . ' - ' . $class['subject_name']);
-                                $selected = ($filter_class_id == $class['id']) ? 'selected' : '';
-                                echo "<option value='{$class['id']}' $selected>{$display_text}</option>";
+    <div class="card card-outline card-primary mb-4">
+        <div class="card-header">
+            <h3 class="card-title">Select Criteria</h3>
+        </div>
+        <div class="card-body">
+            <form method="GET" action="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>">
+                <div class="row align-items-end">
+                    <div class="col-md-5">
+                        <label class="form-label">Select Class</label>
+                        <select name="class_id" id="class_id" class="form-select form-control" required>
+                            <option value="">Select a Class</option>
+                            <?php
+                            // UPDATED: SQL query now joins with class_types to get the type_name
+                            $sql_classes = "SELECT c.id, s.subject_name, cl.level_name, ct.type_name 
+                                            FROM classes c 
+                                            JOIN subjects s ON c.subject_id=s.id 
+                                            JOIN class_levels cl ON c.class_level_id=cl.id 
+                                            JOIN class_types ct ON c.class_type_id = ct.id
+                                            WHERE c.status='Active' 
+                                            ORDER BY cl.level_name, s.subject_name";
+                            $result_classes = $db->query($sql_classes);
+                            while ($class = $result_classes->fetch_assoc()) {
+                                $selected = ($selected_class_id == $class['id']) ? 'selected' : '';
+                                // UPDATED: Display text now includes the class type
+                                $display_text = htmlspecialchars($class['level_name'] . ' - ' . $class['subject_name'] . ' (' . $class['type_name'] . ')');
+                                echo "<option value='{$class['id']}' $selected>" . $display_text . "</option>";
                             }
-                        }
-                        ?>
-                    </select>
+                            ?>
+                        </select>
+                    </div>
+                    <div class="col-md-5">
+                        <label class="form-label">Select Date</label>
+                        <input type="date" name="date" class="form-control"
+                            value="<?= htmlspecialchars($filter_date) ?>">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">View Report</button>
+                    </div>
                 </div>
-                <div class="col-md-5">
-                    <label for="date" class="form-label"><b>Select Date</b></label>
-                    <input type="date" name="date" id="date" class="form-control" value="<?= htmlspecialchars($filter_date) ?>">
-                </div>
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-primary w-100">View Report</button>
-                </div>
-            </div>
-        </form>
+            </form>
+        </div>
     </div>
 
-    <!-- Attendance Report Table -->
-    <div class="table-wrapper">
-        <?php if ($filter_class_id > 0): ?>
-            <h4 class="mb-3">Report for <?= htmlspecialchars($filter_date) ?></h4>
+    <?php
+    if (!empty($messages)) {
+        echo '<div class="alert alert-warning">';
+        foreach($messages as $message) {
+            echo htmlspecialchars($message) . '<br>';
+        }
+        echo '</div>';
+    }
+    ?>
+
+    <?php if (empty($messages) && !empty($filter_class_id)): ?>
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Attendance Report for <?= htmlspecialchars($filter_date) ?></h3>
+        </div>
+        <div class="card-body">
             <div class="table-responsive">
-                <table class="table table-striped table-hover">
-                    <thead class="thead-light">
+                <table id="reportTable" class="table table-striped table-bordered">
+                    <thead>
                         <tr>
                             <th>#</th>
                             <th>Student Name</th>
                             <th>Registration No</th>
+                            <th>Status</th>
                             <th>Marked At</th>
                             <th>Marked By</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php if (!empty($attendance_records)): ?>
-                            <?php $i = 1; foreach ($attendance_records as $record): ?>
-                                <tr>
-                                    <td><?= $i++ ?></td>
-                                    <td><?= htmlspecialchars($record['student_first_name'] . ' ' . $record['student_last_name']) ?></td>
-                                    <td><?= htmlspecialchars($record['registration_no']) ?></td>
-                                    <td><?= htmlspecialchars(date('h:i:s A', strtotime($record['marked_at']))) ?></td>
-                                    <td><?= htmlspecialchars($record['marker_first_name'] . ' ' . $record['marker_last_name']) ?></td>
-                                </tr>
-                            <?php endforeach; ?>
+                        <?php $i = 1; foreach ($attendance_records as $record): ?>
+                        <tr>
+                            <td><?= $i++ ?></td>
+                            <td><?= htmlspecialchars($record['student_first_name'] . ' ' . $record['student_last_name']) ?>
+                            </td>
+                            <td><?= htmlspecialchars($record['registration_no']) ?></td>
+                            <td>
+                                <span class="badge bg-<?= ($record['status'] == 'Present') ? 'success' : 'danger' ?>">
+                                    <?= htmlspecialchars($record['status']) ?>
+                                </span>
+                            </td>
+                            <td><?= !empty($record['marked_at']) ? htmlspecialchars(date('h:i:s A', strtotime($record['marked_at']))) : '' ?>
+                            </td>
+                            <td><?= htmlspecialchars($record['marker_first_name'] ?? 'N/A') ?></td>
+                        </tr>
+                        <?php endforeach; ?>
                         <?php else: ?>
-                            <tr>
-                                <td colspan="5" class="text-center text-muted">No attendance records found for the selected class and date.</td>
-                            </tr>
+                        <tr>
+                            <td colspan="6" class="text-center text-muted">No attendance records found for the selected
+                                class and date.</td>
+                        </tr>
                         <?php endif; ?>
                     </tbody>
                 </table>
             </div>
-        <?php else: ?>
-            <div class="alert alert-info text-center">
-                Please select a class and a date to view the attendance report.
-            </div>
-        <?php endif; ?>
+        </div>
     </div>
+    <?php endif; ?>
 </div>
+
+<script>
+// Initialize DataTable if the table is present
+$(document).ready(function() {
+    if ($('#reportTable').length) {
+        $('#reportTable').DataTable({
+            "responsive": true,
+            "buttons": ["copy", "csv", "excel", "pdf", "print"]
+        }).buttons().container().appendTo('#reportTable_wrapper .col-md-6:eq(0)');
+    }
+});
+</script>
 
 <?php
 $content = ob_get_clean();

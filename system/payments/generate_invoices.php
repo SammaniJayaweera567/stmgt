@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $invoice_year = (int)$date_parts[0];
         $invoice_month = (int)$date_parts[1];
 
-        // --- 1. Get all active enrollments for existing students ---
+        // --- 1. Get all active enrollments for EXISTING students ---
         // FIXED: Added a JOIN to the 'users' table to ensure the student exists.
         $sql_enrollments = "SELECT e.student_user_id, e.class_id, c.class_fee 
                             FROM enrollments e
@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $discount_applied = 0;
                 $payable_amount = $base_fee;
 
-                $sql_discount = "SELECT dt.type_name, dt.value_logic, dt.default_value as type_default_value, sd.discount_value as specific_value
+                $sql_discount = "SELECT dt.value_logic, sd.discount_value 
                                  FROM student_discounts sd
                                  JOIN discount_types dt ON sd.discount_type_id = dt.id
                                  WHERE sd.student_user_id = '$student_id' AND sd.class_id = '$class_id' AND sd.status = 'Active'";
@@ -54,22 +54,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 if ($result_discount && $result_discount->num_rows > 0) {
                     $discount = $result_discount->fetch_assoc();
                     $logic = $discount['value_logic'];
-                    
-                    $value = ($logic == 'Percentage' || $logic == 'Fixed Amount') ? $discount['specific_value'] : $discount['type_default_value'];
+                    $value = $discount['discount_value'];
 
                     if ($logic == 'Percentage') {
                         $discount_applied = ($base_fee * $value) / 100;
-                        $payable_amount = $base_fee - $discount_applied;
                     } elseif ($logic == 'Fixed Amount') {
                         $discount_applied = $value;
-                        $payable_amount = $base_fee - $value;
                     }
+                    $payable_amount = $base_fee - $discount_applied;
                 }
                 
                 if ($payable_amount < 0) { $payable_amount = 0; }
 
                 // --- 4. Create the invoice ---
-                $due_date = date('Y-m-t', strtotime($invoice_month_year)); // Last day of the selected month
+                $due_date = date('Y-m-t', strtotime($invoice_month_year));
                 $sql_insert = "INSERT INTO invoices (student_user_id, class_id, invoice_month, invoice_year, base_fee, discount_applied, payable_amount, due_date, status)
                                VALUES ('$student_id', '$class_id', '$invoice_month', '$invoice_year', '$base_fee', '$discount_applied', '$payable_amount', '$due_date', 'Pending')";
                 
@@ -94,19 +92,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <h5 class="w-auto">Generate Monthly Invoices</h5>
         </div>
     </div>
-
     <div class="card card-primary">
-        <div class="card-header">
-            <h3 class="card-title">Invoice Generation Tool</h3>
-        </div>
+        <div class="card-header"><h3 class="card-title">Invoice Generation Tool</h3></div>
         <form method="post" action="<?= htmlspecialchars($_SERVER['PHP_SELF']) ?>">
             <div class="card-body">
                 <?php if(!empty($messages['main_error'])): ?>
                     <div class="alert alert-danger"><?= htmlspecialchars($messages['main_error']) ?></div>
                 <?php endif; ?>
-
-                <p class="text-muted">Select a month and year to generate invoices for all actively enrolled students. The system will automatically apply any valid discounts. Invoices that already exist for the selected month will be skipped.</p>
-
+                <p class="text-muted">Select a month and year to generate invoices for all actively enrolled students. The system will automatically apply any valid discounts and skip existing invoices.</p>
                 <div class="row">
                     <div class="form-group col-md-6 mb-3">
                         <label for="invoice_month">Select Month & Year <span class="text-danger">*</span></label>
@@ -122,9 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     <?php if (!empty($report)): ?>
     <div class="card mt-4">
-        <div class="card-header">
-            <h3 class="card-title">Generation Report for <?= date('F Y', strtotime($invoice_month_year)) ?></h3>
-        </div>
+        <div class="card-header"><h3 class="card-title">Generation Report for <?= date('F Y', strtotime($invoice_month_year)) ?></h3></div>
         <div class="card-body">
             <div class="alert alert-success">
                 <h4 class="alert-heading">Process Complete!</h4>
@@ -138,9 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
     </div>
     <?php endif; ?>
-
 </div>
-
 <?php
 $content = ob_get_clean();
 include '../layouts.php'; 

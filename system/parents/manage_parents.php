@@ -27,20 +27,17 @@ $db = dbConn();
                             <thead>
                                 <tr>
                                     <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Contact No.</th>
-                                    <th>Status</th>
+                                    <th>Email & Contact</th>
                                     <th>Linked Children</th>
+                                    <th>Status</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <?php
-                                // SQL to fetch all users with the 'Parent' role
                                 $sql = "SELECT u.Id, u.FirstName, u.LastName, u.Email, u.TelNo, u.Status 
                                         FROM users u 
-                                        JOIN user_roles ur ON u.user_role_id = ur.Id 
-                                        WHERE ur.RoleName = 'Parent' 
+                                        WHERE u.user_role_id = 5 
                                         ORDER BY u.FirstName ASC";
                                 $result = $db->query($sql);
                                 if ($result && $result->num_rows > 0) {
@@ -48,12 +45,12 @@ $db = dbConn();
                                 ?>
                                         <tr>
                                             <td><?= htmlspecialchars($row['FirstName'] . ' ' . $row['LastName']) ?></td>
-                                            <td><?= htmlspecialchars($row['Email']) ?></td>
-                                            <td><?= htmlspecialchars($row['TelNo']) ?></td>
-                                            <td><?= display_status_badge($row['Status']) ?></td>
+                                            <td>
+                                                <?= htmlspecialchars($row['Email']) ?><br>
+                                                <small class="text-muted"><?= htmlspecialchars($row['TelNo']) ?></small>
+                                            </td>
                                             <td>
                                                 <?php
-                                                // Sub-query to get linked children for this parent
                                                 $parent_id = $row['Id'];
                                                 $sql_children = "SELECT u.FirstName, u.LastName 
                                                                  FROM users u 
@@ -63,7 +60,7 @@ $db = dbConn();
                                                 if ($result_children && $result_children->num_rows > 0) {
                                                     $children_names = [];
                                                     while($child = $result_children->fetch_assoc()){
-                                                        $children_names[] = htmlspecialchars($child['FirstName'] . ' ' . $child['LastName']);
+                                                        $children_names[] = htmlspecialchars($child['FirstName']);
                                                     }
                                                     echo implode(', ', $children_names);
                                                 } else {
@@ -71,16 +68,22 @@ $db = dbConn();
                                                 }
                                                 ?>
                                             </td>
-                                            <td class="text-center">
-                                                <a href="link_student.php?parent_id=<?= $row['Id'] ?>" class="btn btn-info btn-sm" title="Manage Linked Children">
-                                                    <i class="fas fa-link"></i> Manage Children
-                                                </a>
+                                            <td><?= display_status_badge($row['Status']) ?></td>
+                                            <td>
+                                                <form action="process_parent_status.php" method="post" class="d-flex">
+                                                    <input type="hidden" name="parent_id" value="<?= $row['Id'] ?>">
+                                                    <select name="new_status" class="form-select form-select-sm me-2">
+                                                        <option value="Active" <?= ($row['Status'] == 'Active') ? 'selected' : '' ?>>Active</option>
+                                                        <option value="Inactive" <?= ($row['Status'] == 'Inactive') ? 'selected' : '' ?>>Inactive</option>
+                                                    </select>
+                                                    <button type="submit" name="update_status" class="btn btn-primary btn-sm">Update</button>
+                                                </form>
                                             </td>
                                         </tr>
                                 <?php
                                     }
                                 } else {
-                                    echo '<tr><td colspan="6" class="text-center">No parents found.</td></tr>';
+                                    echo '<tr><td colspan="5" class="text-center">No parents found.</td></tr>';
                                 }
                                 ?>
                             </tbody>
@@ -100,5 +103,6 @@ $db = dbConn();
 
 <?php
 $content = ob_get_clean();
+// Assuming you are in 'system/parents/', the layout is in 'system/'
 include '../layouts.php'; 
 ?>

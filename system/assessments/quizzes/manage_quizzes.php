@@ -56,41 +56,46 @@ $db = dbConn();
                                         JOIN class_levels cl ON c.class_level_id = cl.id
                                         JOIN subjects s ON c.subject_id = s.id
                                         JOIN class_types ct ON c.class_type_id = ct.id
-                                        WHERE a.assessment_type = 'Quiz'
+                                        WHERE a.assessment_type_id = 3 -- Changed from assessment_type to assessment_type_id = 3 (for Quiz)
                                         ORDER BY a.created_at DESC";
-                                $result = $db->query($sql);
+                                $result = $db->query($sql); // Line 61
 
                                 if ($result->num_rows > 0) {
                                     while ($row = $result->fetch_assoc()) {
                                         $class_full_name = htmlspecialchars($row['level_name'] . ' - ' . $row['subject_name'] . ' (' . $row['type_name'] . ')');
                                 ?>
-                                        <tr>
-                                            <td><?= htmlspecialchars($row['title']) ?></td>
-                                            <td><?= $class_full_name ?></td>
-                                            <td><?= htmlspecialchars($row['subject_name']) ?></td>
-                                            <td><?= htmlspecialchars($row['time_limit_minutes']) ?> mins</td>
-                                            <td><?= htmlspecialchars(number_format($row['total_marks'] ?? 0, 2)) ?></td>
-                                            <td><?= display_status_badge($row['status']) ?></td>
-                                            <td class="text-start">
-                                                <div class="btn-group">
-                                                    <a href="manage_questions.php?quiz_id=<?= $row['id'] ?>" class="btn btn-info btn-sm mr-1" title="Manage Questions">
-                                                        <i class="fas fa-list-ol"></i>
-                                                    </a>
-                                                    <a href="edit_quiz.php?id=<?= $row['id'] ?>" class="btn btn-primary btn-sm mr-1" title="Edit Quiz">
-                                                        <i class="fas fa-edit"></i>
-                                                    </a>
-                                                    <form action="delete_quiz.php" method="post" style="display:inline-block;" onsubmit="return confirm('Are you sure you want to delete this quiz and all its questions? This action cannot be undone.');">
-                                                        <input type="hidden" name="id" value="<?= $row['id'] ?>">
-                                                        <button type="submit" class="btn btn-danger btn-sm mr-1" title="Delete Quiz">
-                                                            <i class="fas fa-trash"></i>
-                                                        </button>
-                                                    </form>
-                                                    <a href="view_quiz_results.php?quiz_id=<?= $row['id'] ?>" class="btn btn-success btn-sm" title="View Results">
-                                                        <i class="fas fa-poll"></i>
-                                                    </a>
-                                                </div>
-                                            </td>
-                                        </tr>
+                                <tr>
+                                    <td><?= htmlspecialchars($row['title']) ?></td>
+                                    <td><?= $class_full_name ?></td>
+                                    <td><?= htmlspecialchars($row['subject_name']) ?></td>
+                                    <td><?= htmlspecialchars($row['time_limit_minutes']) ?> mins</td>
+                                    <td><?= htmlspecialchars(number_format($row['total_marks'] ?? 0, 2)) ?></td>
+                                    <td><?= display_status_badge($row['status']) ?></td>
+                                    <td class="text-start">
+                                        <div class="btn-group">
+                                            <a href="manage_questions.php?quiz_id=<?= $row['id'] ?>"
+                                                class="btn btn-info btn-sm mr-1" title="Manage Questions">
+                                                <i class="fas fa-list-ol"></i>
+                                            </a>
+                                            <a href="edit_quiz.php?id=<?= $row['id'] ?>"
+                                                class="btn btn-primary btn-sm mr-1" title="Edit Quiz">
+                                                <i class="fas fa-edit"></i>
+                                            </a>
+                                            <form action="delete_quiz.php" method="post" style="display:inline-block;"
+                                                onsubmit="return confirm('Are you sure you want to delete this quiz and all its questions? This action cannot be undone.');">
+                                                <input type="hidden" name="id" value="<?= $row['id'] ?>">
+                                                <button type="submit" class="btn btn-danger btn-sm mr-1"
+                                                    title="Delete Quiz">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                            <a href="view_quiz_results.php?quiz_id=<?= $row['id'] ?>"
+                                                class="btn btn-success btn-sm" title="View Results">
+                                                <i class="fas fa-poll"></i>
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
                                 <?php
                                     }
                                 } else {
@@ -107,9 +112,9 @@ $db = dbConn();
 </div>
 
 <script>
-    $(document).ready(function() { 
-        $('#quizzesTable').DataTable(); 
-    });
+$(document).ready(function() {
+    $('#quizzesTable').DataTable();
+});
 </script>
 
 <?php
