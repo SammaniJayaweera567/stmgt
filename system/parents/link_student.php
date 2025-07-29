@@ -12,15 +12,17 @@ if (!hasPermission($_SESSION['user_id'], 'show_parent')) {
     header("Location: $backUrl");
     exit;
 }
+$parent_id = $_GET['parent_id'];
 $db = dbConn();
 
 // --- Fetch Parent's Details ---
 $sql_parent = "SELECT FirstName, LastName FROM users WHERE Id = '$parent_id'";
+
 $result_parent = $db->query($sql_parent);
-if ($result_parent->num_rows === 0) {
-    header("Location: manage_parents.php?status=notfound");
-    exit();
-}
+// if ($result_parent->num_rows === 0) {
+//     header("Location: manage_parents.php?status=notfound");
+//     exit();
+// }
 $parent_data = $result_parent->fetch_assoc();
 $parent_name = $parent_data['FirstName'] . ' ' . $parent_data['LastName'];
 
